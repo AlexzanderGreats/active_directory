@@ -11,3 +11,10 @@
 Install-WindowsFeature AD-Domain-Services -IncludeMangagementTools
 ```
 
+3. Imported the Module ADDeployment and installed ADDSforest.
+
+    - Gave the server the directory "MDA.com" (Tried MythicalDungeonAssociation.com, but that was too long (max of 15 characters))
+    - Modified DNS Server Address, then took a snapshot of the completed product.
+    - 
+
+4. 
