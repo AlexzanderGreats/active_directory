@@ -1,0 +1,183 @@
+{
+    "users": [
+        {
+            "first_name": "Arthur",
+            "last_name": "River",
+            "password": "ChangeMe-SURV-001!",
+            "username": "arthur_river",
+            "department": "Surveillance",
+            "job_title": "Surveillance Chief",
+            "groups": ["MDA_Surveillance_Chiefs", "MDA_Surveillance"],
+            "account_type": "standard"
+        },
+        {
+            "first_name": "Arthur",
+            "last_name": "River",
+            "password": "ChangeMe-SURV-ADM-001!",
+            "username": "adm_arthur_river",
+            "department": "Surveillance",
+            "job_title": "Surveillance Chief",
+            "account_purpose": "department_admin",
+            "groups": ["MDA_Surveillance_Admins"],
+            "account_type": "privileged"
+        },
+        {
+            "first_name": "Scott",
+            "last_name": "Kang",
+            "password": "ChangeMe-SURV-002!",
+            "username": "scott_kang",
+            "department": "Surveillance",
+            "job_title": "Surveillance Agent",
+            "groups": ["MDA_Surveillance"],
+            "account_type": "standard"
+        },
+
+        {
+            "first_name": "Robert",
+            "last_name": "Gordon",
+            "password": "ChangeMe-IT-001!",
+            "username": "robert_gordon",
+            "department": "Information Technology",
+            "job_title": "Information Technology Chief",
+            "groups": ["MDA_IT_Chiefs", "MDA_IT"],
+            "account_type": "standard"
+        },
+        {
+            "first_name": "Robert",
+            "last_name": "Gordon",
+            "password": "ChangeMe-IT-ADM-001!",
+            "username": "adm_robert_gordon",
+            "department": "Information Technology",
+            "job_title": "Information Technology Chief",
+            "account_purpose": "department_admin",
+            "groups": ["MDA_IT_Admins"],
+            "account_type": "privileged"
+        },
+        {
+            "first_name": "Luke",
+            "last_name": "Gibson",
+            "password": "ChangeMe-IT-002!",
+            "username": "luke_gibson",
+            "department": "Information Technology",
+            "job_title": "Information Technology Technician",
+            "groups": ["MDA_IT"],
+            "account_type": "standard"
+        },
+
+        {
+            "first_name": "Lucy",
+            "last_name": "Hill",
+            "password": "ChangeMe-EVAL-001!",
+            "username": "lucy_hill",
+            "department": "Evaluation",
+            "job_title": "Evaluation Chief",
+            "groups": ["MDA_Evaluation_Chiefs", "MDA_Evaluation"],
+            "account_type": "standard"
+        },
+        {
+            "first_name": "Lucy",
+            "last_name": "Hill",
+            "password": "ChangeMe-EVAL-ADM-001!",
+            "username": "adm_lucy_hill",
+            "department": "Evaluation",
+            "job_title": "Evaluation Chief",
+            "account_purpose": "department_admin",
+            "groups": ["MDA_Evaluation_Admins"],
+            "account_type": "privileged"
+        },
+        {
+            "first_name": "Brentley",
+            "last_name": "Terry",
+            "password": "ChangeMe-EVAL-002!",
+            "username": "brentley_terry",
+            "department": "Evaluation",
+            "job_title": "Evaluation Specialist",
+            "groups": ["MDA_Evaluation"],
+            "account_type": "standard"
+        },
+
+        {
+            "first_name": "Truman",
+            "last_name": "Sweet",
+            "password": "ChangeMe-REG-001!",
+            "username": "truman_sweet",
+            "department": "Registration",
+            "job_title": "Registration Chief",
+            "groups": ["MDA_Registration_Chiefs", "MDA_Registration"],
+            "account_type": "standard"
+        },
+        {
+            "first_name": "Truman",
+            "last_name": "Sweet",
+            "password": "ChangeMe-REG-ADM-001!",
+            "username": "adm_truman_sweet",
+            "department": "Registration",
+            "job_title": "Registration Chief",
+            "account_purpose": "department_admin",
+            "groups": ["MDA_Registration_Admins"],
+            "account_type": "privileged"
+        },
+        {
+            "first_name": "Jess",
+            "last_name": "Martin",
+            "password": "ChangeMe-REG-002!",
+            "username": "jess_martin",
+            "department": "Registration",
+            "job_title": "Registration Specialist",
+            "account_purpose": "department_Specialist",
+            "groups": ["MDA_Registration"],
+            "account_type": "standard"
+        },
+
+        {
+            "first_name": "Milan",
+            "last_name": "Schmidt",
+            "password": "ChangeMe-DIST-001!",
+            "username": "milan_schmidt",
+            "department": "Distribution",
+            "job_title": "Distribution Chief",
+            "groups": ["MDA_Distribution_Chiefs", "MDA_Distribution"],
+            "account_type": "standard"
+        },
+        {
+            "first_name": "Milan",
+            "last_name": "Schmidt",
+            "password": "ChangeMe-DIST-ADM-001!",
+            "username": "adm_milan_schmidt",
+            "department": "Distribution",
+            "job_title": "Distribution Chief",
+            "account_purpose": "department_admin",
+            "groups": ["MDA_Distribution_Admins"],
+            "account_type": "privileged"
+        },
+        {
+            "first_name": "Alina",
+            "last_name": "Cox",
+            "password": "ChangeMe-DIST-002!",
+            "username": "alina_cox",
+            "department": "Distribution",
+            "job_title": "Distribution Specialist",
+            "account_purpose": "department_Specialist",
+            "groups": ["MDA_Distribution"],
+            "account_type": "standard"
+        }
+    ],
+
+    "groups": [
+        {"name": "MDA_Surveillance"},
+        {"name": "MDA_Surveillance_Chiefs"},
+        {"name": "MDA_Surveillance_Admins"},
+        {"name": "MDA_IT"},
+        {"name": "MDA_IT_Chiefs"},
+        {"name": "MDA_IT_Admins"},
+        {"name": "MDA_Evaluation"},
+        {"name": "MDA_Evaluation_Chiefs"},
+        {"name": "MDA_Evaluation_Admins"},
+        {"name": "MDA_Registration"},
+        {"name": "MDA_Registration_Chiefs"},
+        {"name": "MDA_Registration_Admins"},
+        {"name": "MDA_Distribution"},
+        {"name": "MDA_Distribution_Chiefs"},
+        {"name": "MDA_Distribution_Admins"}
+    ]
+}
