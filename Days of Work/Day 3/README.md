@@ -736,6 +736,7 @@
 7. Signed into a user.
 
     - Signed into Arthur River's account. Prompted me to change password.
+    - Attempted password as "AgentRiverGUH," but it rejected it, asking for a stronger password.
 
     ```prompt
     New Password: AMD_R!v3rAnrth3r_123!
@@ -745,7 +746,8 @@
     - Attempted to use Terminal as admin:
 
     ```prompt:
-    adm_river_
+    user: adm_river_arthur
+    password: ADM_R!v3rArthnr_123!
     ```
 
     - The requested operation needs elevation, I also messed up the password, cause its "amd" and not "adm".
