@@ -1,7 +1,7 @@
 # active_directory
 
 Notes and Recourses for my Active Directory Lab
-Based on the Youtube series Active Directory from <https://youtube.com/@_JohnHammond>, I am currently following the tutorial day by day.
+Based on the YouTube series Active Directory from <https://youtube.com/@_JohnHammond>, I am currently following the tutorial day by day.
 
 Objective:
     The objective of this project is to simulate a small enterprise domain environment in which a Windows Server functions as an Active Directory Domain Controller and provides centralized identity, authentication, access, and policy management for domain-joined client systems and users. The environment will be used to gain practical experience in deploying and administering Active Directory Domain Services (AD DS), managing organizational units, users, security groups, and permissions, and applying role-based access control and least-privilege principles to organizational resources. The project will also simulate common administrative processes such as employee onboarding and offboarding, Group Policy configuration, account and security-policy management, and access validation. As the environment evolves, intentional security misconfigurations and administrative errors will be introduced, investigated, documented, remediated, and retested to build practical experience in troubleshooting and security analysis. All significant configurations, changes, incidents, security decisions, and lessons learned will be documented to demonstrate not only how the environment was built and administered, but why particular technical and security decisions were made.
