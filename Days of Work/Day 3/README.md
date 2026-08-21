@@ -731,3 +731,13 @@
 
     - The second run shows that the script recognized every existing OU, security group, user account, and group membership instead of trying to recreate them.
     - It can be rerun safely against the current state without producing duplicates or obvious configuration drift.
+
+7. Signed into a user.
+
+    - Signed into Arthur River's account. Prompted me to change password.
+    
+    ```prompt
+    New Password: AMD_R!v3rAnrth3r_123!
+    ```
+
+    - Successfully changed password, and signed me in.
