@@ -1,3 +1,5 @@
+# 03 Automation and Domain Users
+
 1. Add the files to the Controll VM.
 
     - I have stepped away quite substantially from the tutorial, at least in the functionality of the "gen_ad.ps1" file and "ad_schema.json" file.
