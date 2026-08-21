@@ -174,6 +174,7 @@
 6. Copied "ad_schema.json" and "gen_ad.ps1" to DC01.
 
     - I also made it easier to enter the DC with $dc and $creds.
+
     ```shell
     $creds = (Get-Credential)
     echo $creds
@@ -191,7 +192,7 @@
     ```
 
     - Verified that "gen_ad.ps1" can parse "ad_schema.json." It does so successfully with no errors.
-    
+
     ```shell
     [192.168.244.155]: PS C:\windows\Tasks> .\gen_ad.ps1
 
@@ -735,14 +736,14 @@
 7. Signed into a user.
 
     - Signed into Arthur River's account. Prompted me to change password.
-    
+
     ```prompt
     New Password: AMD_R!v3rAnrth3r_123!
     ```
 
     - Successfully changed password, and signed me in.
     - Attempted to use Terminal as admin:
-    
+
     ```prompt:
     adm_river_
     ```
