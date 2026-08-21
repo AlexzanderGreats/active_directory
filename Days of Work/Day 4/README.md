@@ -3,9 +3,9 @@
 1. Add the files to the Controll VM.
 
     - I have stepped away quite substantially from the tutorial, at least in the functionality of the "gen_ad.ps1" file and "ad_schema.json" file.
-    - That's not bad, but I created them on my host machine, and not in the Workstation VM. Which is fine for ease of editing and file continuity without worrying about breaking my VMs and losing my progress if I was actively typing something out there and progressing.
+    - That's not bad, but I created them on my host machine, and not in the Workstation VM, which is fine for ease of editing and file continuity without worrying about breaking my VMs and losing my progress if I was actively typing something out there and progressing.
     - The good news is, if I just run the DC VM and use New-PSSession and connect to the DC, I can just copy over the files. Thus, that's the plan.
-    - Better idea: download Gihub desktop onto the WS01 VM, sign in, get the project, and just copy over the files through the VM.
+    - Better idea: download GitHub Desktop onto the WS01 VM, sign in, get the project, and just copy over the files through the VM.
 
 2. Copied "ad_schema.json" and "gen_ad.ps1" to DC01.
 
@@ -329,7 +329,7 @@
     ...
     ```
 
-    - Now verifying if it can the automation safely encounter an environment it has already built.
+    - Now verifying if the automation can safely encounter an environment it has already built.
 
     ```shell
     ========================================
@@ -571,14 +571,14 @@
 
 3. Signed into a user.
 
-    - Signed into Arthur River's account. Prompted me to change password.
+    - Signed into Arthur River's account. Prompted me to change my password.
     - Attempted password as "AgentRiverGUH," but it rejected it, asking for a stronger password.
 
     ```prompt
     New Password: AMD_R!v3rAnrth3r_123!
     ```
 
-    - Successfully changed password, and signed me in.
+    - Successfully changed password and signed me in.
     - Attempted to use Terminal as admin:
 
     ```prompt:
@@ -586,8 +586,8 @@
     password: ADM_R!v3rArthnr_123!
     ```
 
-    - The requested operation needs elevation, I also messed up the password, cause its "amd" and not "adm".
-    - I went to the DC1, and entered a command to change the password to the correct format and spelling.
+    - The requested operation needs elevation. I also messed up the password cause its "amd" and not "adm".
+    - I went to DC1 and entered a command to change the password to the correct format and spelling.
 
     ```shell
     PS C:\Windows\Tasks> Set-ADAccountPassword `-Identity "adm_arthur_river" `-Reset `-NewPassword (ConvertTo-SecureString "ADM_R!v3rArthnr_123!" -AsPlainText -Force)
