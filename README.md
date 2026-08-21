@@ -18,3 +18,6 @@ Number of Departments: 5 (Surveillance Department; IT Department; Evaluation Dep
 Number of Users: 10
 Number of User Accounts: 15
 Security Requirements: Centralized identity and authentication; role-based access control; least privilege; privileged-account separation; account and access auditing; security logging; password and account-lockout policies; controlled onboarding and offboarding.
+
+Security Notice:
+    All credentials shown in this repository are intentionally disclosed, disposable credentials created exclusively for the isolated MDA home-lab environment. They are not reused for personal, production, cloud, or internet-accessible accounts and provide no access to systems outside this lab.
