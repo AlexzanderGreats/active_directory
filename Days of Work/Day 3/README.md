@@ -163,3 +163,10 @@
     - This does arise another question: Does Distribution need access to Evaluation?
     - Probably, but not EVERYTHING. So we could add Ms. Schmidt to "MDA_Evalutation_Approved_Read" and grant that group read-only access to an approved records location.
     - Ironically, introducing me to group nesting.
+
+5. Add the files to the Controll VM.
+
+    - I have stepped away quite substantially from the tutorial, at least in the functionality of the "gen_ad.ps1" file and "ad_schema.json" file.
+    - That's not bad, but I created them on my host machine, and not in the Workstation VM. Which is fine for ease of editing and file continuity without worrying about breaking my VMs and losing my progress if I was actively typing something out there and progressing.
+    - The good news is, if I just run the DC VM and use New-PSSession and connect to the DC, I can just copy over the files. Thus, that's the plan.
+    - .
