@@ -741,3 +741,17 @@
     ```
 
     - Successfully changed password, and signed me in.
+    - Attempted to use Terminal as admin:
+    
+    ```prompt:
+    adm_river_
+    ```
+
+    - The requested operation needs elevation, I also messed up the password, cause its "amd" and not "adm".
+    - I went to the DC1, and entered a command to change the password to the correct format and spelling.
+
+    ```shell
+    PS C:\Windows\Tasks> Set-ADAccountPassword `-Identity "adm_arthur_river" `-Reset `-NewPassword (ConvertTo-SecureString "ADM_R!v3rArthnr_123!" -AsPlainText -Force)
+    ```
+
+    - Password change successful, and login was successful.
