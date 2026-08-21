@@ -16,5 +16,5 @@ Industry: Federal/Central Government Regulatory & Public Safety Agency.
 Headquarters: Klato.
 Number of Departments: 5 (Surveillance Department; IT Department; Evaluation Department; Registration Department; Distribution Department)
 Number of Users: 10
-Number of User Accounts: 20
+Number of User Accounts: 15
 Security Requirements: Centralized identity and authentication; role-based access control; least privilege; privileged-account separation; account and access auditing; security logging; password and account-lockout policies; controlled onboarding and offboarding.
