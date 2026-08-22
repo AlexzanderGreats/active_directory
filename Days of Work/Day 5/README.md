@@ -41,3 +41,4 @@
     - I however want to generated users that remain in standard accounts, job titles are department-appropriate, and I don't wnt the script to randomly hands somebody `*_Admins` or `*_Chiefs` membership.
     - By default, I want the generator to create 20 users, with 30% receiving intentionally guessable but potentially policy-compliant lab passwords such as `Summer2026!`.
     - The account can still provision while remaining intentionally weak enough to become a later security finding.
+    - I will also want controls to escape luck, such as employing a 'seed', or something to recreate a simulation and retest it against what I already have in the `MDA.com` domain.
