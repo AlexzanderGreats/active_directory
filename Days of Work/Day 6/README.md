@@ -230,3 +230,17 @@
 
     - I did it on purpose, because I thought I didn't copy the information of the first run through, but I did.
     - But, hey! I tested rerunability, too, so two birds, one stone.
+
+3. Logging into a generated account.
+
+    - We are going to log into the WS01 with Felix Grey.
+
+    ```script
+    "first_name":  "Felix",
+    "last_name":  "Grey",
+    "password":  "Password2026!",
+    "username":  "felix_grey",
+    ```
+
+    - Neither River or Felix works, now. I think I might need to diconnect the WS01 from the domain, and reconnect it to update it. HOWEVER, it does not say neither exists, but that the password or username might be wrong...
+    - .
