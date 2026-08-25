@@ -121,3 +121,112 @@
 
     - Unfortunately, I am having the same issue again. The next best thing for me to do is to keep the parameter mandatory but explicitly initialize `$existingUsernames` in the calling scope with an actual empty `HashSet[string]` and pass it in.
     - The current error strongly suggests that $existingUsernames itself is already an empty HashSet, so the binder is objecting specifically to an empty collection being supplied to a mandatory collection parameter.
+
+    - Applied the changes I needed, apparently, I was not pasting in the corrections, or they weren't saving properly. So I made the changes on my host machine, saved it, made a mess, cleaned it, and now I am going to pass the right file into the DC, and finally test it.
+    - IT WORKS!!!! LESSSSSSSSSSSSS GOOOOOOOOOOOOOOOOOOO
+
+    ```shell
+    [SEED] Random generation seed set to 5024
+
+    ========================================
+    MDA VULNERABLE SCHEMA GENERATOR
+    ========================================
+    Users Requested:        20
+    Weak Password Percent:  35%
+    Policy Failures:        False
+    Output Path:            .\generated_vuln_schema.json
+    ========================================
+    [GENERATED] felix_grey -> Surveillance / Surveillance Agent / weak
+    [GENERATED] ivan_west -> Distribution / Asset Distribution Analyst / stronger
+    [GENERATED] elena_dalton -> Distribution / Distribution Specialist / weak
+    [GENERATED] julia_dalton -> Distribution / Distribution Specialist / stronger
+    [GENERATED] bianca_ellis -> Surveillance / Surveillance Analyst / stronger
+    [GENERATED] helena_cole -> Distribution / Auction Operations Specialist / stronger
+    [GENERATED] priya_reed -> Distribution / Asset Distribution Analyst / stronger
+    [GENERATED] elias_pierce -> Evaluation / Evaluation Specialist / stronger
+    [GENERATED] lena_frost -> Registration / Records Specialist / stronger
+    [GENERATED] elena_price -> Distribution / Distribution Specialist / stronger
+    [GENERATED] yara_vale -> Evaluation / Mythic Assessment Specialist / stronger
+    [GENERATED] selene_hayes -> Registration / Guild Registration Analyst / weak
+    [GENERATED] helena_turner -> Registration / Registration Specialist / stronger
+    [GENERATED] jade_morrow -> Information Technology / IT Operations Analyst / stronger
+    [GENERATED] isaac_grey -> Information Technology / IT Operations Analyst / stronger
+    [GENERATED] yara_nolan -> Information Technology / Information Technology Technician / stronger
+    [GENERATED] diana_archer -> Surveillance / Surveillance Analyst / weak
+    [GENERATED] diana_cross -> Surveillance / Surveillance Agent / stronger
+    [GENERATED] nadia_ellis -> Evaluation / Evaluation Specialist / stronger
+    [GENERATED] orion_owens -> Information Technology / IT Operations Analyst / stronger
+
+    ========================================
+    Validating Generated Schema
+    ========================================
+    [SCHEMA VALID] Generated schema passed validation.
+
+    ========================================
+    GENERATION SUMMARY
+    ========================================
+    Total Users:              20
+    Weak Password Users:      4
+    Stronger Password Users:  16
+    Policy-Failure Users:     0
+    ========================================
+
+    [COMPLETE] Generated schema written to:
+    .\generated_vuln_schema.json
+    ```
+
+    - I was not making the changes I wanted to make, but now, it works. And I copied the generated json file to this project, too.
+    - I also reran the script, and it seemed not to break anything.
+
+    ```shell
+    [SEED] Random generation seed set to 5024
+
+    ========================================
+    MDA VULNERABLE SCHEMA GENERATOR
+    ========================================
+    Users Requested:        20
+    Weak Password Percent:  35%
+    Policy Failures:        False
+    Output Path:            .\generated_vuln_schema.json
+    ========================================
+    [GENERATED] felix_grey -> Surveillance / Surveillance Agent / weak
+    [GENERATED] ivan_west -> Distribution / Asset Distribution Analyst / stronger
+    [GENERATED] elena_dalton -> Distribution / Distribution Specialist / weak
+    [GENERATED] julia_dalton -> Distribution / Distribution Specialist / stronger
+    [GENERATED] bianca_ellis -> Surveillance / Surveillance Analyst / stronger
+    [GENERATED] helena_cole -> Distribution / Auction Operations Specialist / stronger
+    [GENERATED] priya_reed -> Distribution / Asset Distribution Analyst / stronger
+    [GENERATED] elias_pierce -> Evaluation / Evaluation Specialist / stronger
+    [GENERATED] lena_frost -> Registration / Records Specialist / stronger
+    [GENERATED] elena_price -> Distribution / Distribution Specialist / stronger
+    [GENERATED] yara_vale -> Evaluation / Mythic Assessment Specialist / stronger
+    [GENERATED] selene_hayes -> Registration / Guild Registration Analyst / weak
+    [GENERATED] helena_turner -> Registration / Registration Specialist / stronger
+    [GENERATED] jade_morrow -> Information Technology / IT Operations Analyst / stronger
+    [GENERATED] isaac_grey -> Information Technology / IT Operations Analyst / stronger
+    [GENERATED] yara_nolan -> Information Technology / Information Technology Technician / stronger
+    [GENERATED] diana_archer -> Surveillance / Surveillance Analyst / weak
+    [GENERATED] diana_cross -> Surveillance / Surveillance Agent / stronger
+    [GENERATED] nadia_ellis -> Evaluation / Evaluation Specialist / stronger
+    [GENERATED] orion_owens -> Information Technology / IT Operations Analyst / stronger
+
+    ========================================
+    Validating Generated Schema
+    ========================================
+    [SCHEMA VALID] Generated schema passed validation.
+
+    ========================================
+    GENERATION SUMMARY
+    ========================================
+    Total Users:              20
+    Weak Password Users:      4
+    Stronger Password Users:  16
+    Policy-Failure Users:     0
+    ========================================
+
+    [COMPLETE] Generated schema written to:
+    .\generated_vuln_schema.json
+    ```
+
+    - I did it on purpose, because I thought I didn't copy the information of the first run through, but I did.
+    - But, hey! I tested rerunability, too, so two birds, one stone.

@@ -239,6 +239,7 @@ function ConvertTo-MDAUsername {
         [Parameter(Mandatory = $true)]
         [string] $LastName,
 
+        [AllowEmptyCollection()]
         [Parameter(Mandatory = $true)]
         [System.Collections.Generic.HashSet[string]] $ExistingUsernames
     )
@@ -346,7 +347,6 @@ function New-MDARandomUser {
         intentional_vulnerability = $passwordProfile.Vulnerability
     }
 }
-
 
 function Test-MDAGeneratedSchema {
     param(
