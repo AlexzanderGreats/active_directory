@@ -101,8 +101,8 @@
     - I noticed I wes not using the seed function, like I wanted to, but that's okay. I am going to be using this command to repeat the test if it keeps failing
 
     ```shell
-    PS C:\Windows\Tasks> .\generate_vulnerable_schema.ps1 `
-    >>     -OutputPath ".\generated_vulnerable_schema.json" `
+    PS C:\Windows\Tasks> .\gen_vuln_schema.ps1 `
+    >>     -OutputPath ".\generated_vuln_schema.json" `
     >>     -UserCount 20 `
     >>     -WeakPasswordPercent 35 `
     >>     -Seed 5024
@@ -117,5 +117,7 @@
     - This is happening because $existingUsernames is correctly empty on the first iteration, but the function's parameter definition apparently forbids an empty collection.
     - I need to fix the New-MDARandomUser parameter so an empty collection is valid.
     - My parameter is explicitly typed as `HashSet[string]`, and PowerShell's parameter binder is rejecting the empty collection before the function body executes.
-    - Otherwise, the function itself is reasonable. However, there is an even better option for this particular generator: keep the parameter mandatory but explicitly initialize `$existingUsernames` in the calling scope with an actual empty `HashSet[string]` and pass it in.
+    - Otherwise, the function itself is reasonable.
+
+    - Unfortunately, I am having the same issue again. The next best thing for me to do is to keep the parameter mandatory but explicitly initialize `$existingUsernames` in the calling scope with an actual empty `HashSet[string]` and pass it in.
     - The current error strongly suggests that $existingUsernames itself is already an empty HashSet, so the binder is objecting specifically to an empty collection being supplied to a mandatory collection parameter.
