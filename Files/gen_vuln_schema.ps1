@@ -302,8 +302,10 @@ function Get-MDAPasswordProfile {
 
 function New-MDARandomUser {
     param(
-        [Parameter(Mandatory = $true)]
-        [System.Collections.Generic.HashSet[string]] $ExistingUsernames
+        [Parameter(Mandatory = $false)]
+        [System.Collections.Generic.HashSet[string]] $ExistingUsernames = (
+            [System.Collections.Generic.HashSet[string]]::new()
+        )
     )
 
     $firstName = Get-Random -InputObject $firstNames
@@ -337,13 +339,8 @@ function New-MDARandomUser {
         username = $username
         department = $department
         job_title = $jobTitle
-
-        # Force array shape even when there is one group.
         groups = @($groupsForUser)
-
         account_type = "standard"
-
-        # Extra metadata for lab documentation.
         generated = $true
         password_classification = $passwordProfile.Classification
         intentional_vulnerability = $passwordProfile.Vulnerability
