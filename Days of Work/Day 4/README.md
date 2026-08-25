@@ -1,596 +1,70 @@
-# 03 Automation and Domain Users
+# 03 Generating vulnerable schema
 
-1. Add the files to the Controll VM.
+1. John Hammond codes a repeatable AD lab.
 
-    - I have stepped away quite substantially from the tutorial, at least in the functionality of the "gen_ad.ps1" file and "ad_schema.json" file.
-    - That's not bad, but I created them on my host machine, and not in the Workstation VM, which is fine for ease of editing and file continuity without worrying about breaking my VMs and losing my progress if I was actively typing something out there and progressing.
-    - The good news is, if I just run the DC VM and use New-PSSession and connect to the DC, I can just copy over the files. Thus, that's the plan.
-    - Better idea: download GitHub Desktop onto the WS01 VM, sign in, get the project, and just copy over the files through the VM.
+    - Randomized identities and weak credentials make later authorized exercises.
+        - Domain enumeration, credentials, and testing domainstrations.
+    - The script is not polished by the end, though.
+        - Password-policy handling, cleanup/removal tooling, and reliable schema imports still need refinement.
+    - For me, the randomization concepts are worthwhile.
+        - External first/last-name lists, randomized group assignment, generating PowerShell objects/hashtables, exporting them through ConvertTo-Json, duplicate prevention, and dealing correctly with array serialization are all useful PowerShell exercises.
+    - I am going to make it match my schema, rather than regressing it.
+    - I also discovered that `MDA.com` rejects inadequate passwords, so I am going to keep that and work around it.
+    - I am going to first let the generator encounter that problem and then document it.
+    - I am going to decide what vulnerability I am deliberately introducing and why second.
+        - A vulnerable lab is more educational when I understand which control I weakened, what threat it enables, and how I would remediate it, rather than simply switching security features off until attacks work.
 
-2. Copied "ad_schema.json" and "gen_ad.ps1" to DC01.
+2. The plan!
 
-    - I also made it easier to enter the DC with $dc and $creds.
+    ```Status
+    BASELINE MDA
+    Secure, documented configuration
+            │
+            ▼
+    Introduce controlled misconfiguration
+            │
+            ▼
+    VULNERABLE MDA
+            │
+            ▼
+    Discover / Exploit / Detect
+            │
+            ▼
+    Remediate
+            │
+            ▼
+    Verify restored baseline
+    ```
+
+    - As for the `100 users` idea, I am aiming for starting out with 20 users distributed through the departments I already have for the MDA.
+    - I will probably want to impoment `Get-Random`, mutable collections, randomized users/groups/passwords, hashtables/objects, duplicate prevention, JSON serialization, array handling, schema validation, and live debigging/ tuning.
+    - I however want to generated users that remain in standard accounts, job titles are department-appropriate, and I don't wnt the script to randomly hands somebody `*_Admins` or `*_Chiefs` membership.
+    - By default, I want the generator to create 20 users, with 30% receiving intentionally guessable but potentially policy-compliant lab passwords such as `Summer2026!`.
+    - The account can still provision while remaining intentionally weak enough to become a later security finding.
+    - I will also want controls to escape luck, such as employing a `seed`, or something to recreate a simulation and retest it against what I already have in the `MDA.com` domain.
+
+3. Testing the code.
+
+    - To the code, I added a failure mode for the code, just for the sake of easily undersanding what works and doesn't.
 
     ```shell
-    $creds = (Get-Credential)
-    echo $creds
-
-    UserName                              Password
-    --------                              --------
-    MDA\Administrator                   P@ssw0rd123!
-
-    $dc = New-PSSession 192.168.244.155 -Credential $creds
+    -IncludePolicyFailures
     ```
+
+    - It should allow me to control the number of deliberately inadequate passwords like `password` or `12345678` to appear.
+    - Those may then fail when my existing `gen_ad.ps1` tries to provision them against `MDA.com`.
+    - Allowing me to reproduce one of the tutorial's lessons without having the generator silently weaken the domain.
+    - I also have it generating a new `JSON` file at whatever path I supply with `-OutputPath`.
+    - Another important difference from the baseline I also added metadata to generated users.
 
     ```shell
-    cp .\ad_schema.json -ToSession $dc C:\Windows\Tasks
-    cp .\gen_ad.ps1 -ToSession $dc C:\Windows\Tasks
+    {
+    "generated": true,
+    "password_classification": "weak",
+    "intentional_vulnerability": "Guessable lab password that may satisfy complexity requirements but remains poor security practice."
+    }
     ```
 
-    - Verified that "gen_ad.ps1" can parse "ad_schema.json." It does so successfully with no errors.
-
-    ```shell
-    [192.168.244.155]: PS C:\windows\Tasks> .\gen_ad.ps1
-
-    cmdlet gen_ad.ps1 at command pipeline position 1
-    Supply values for the following parameters:
-    JSONfile: .\ad_schema.json
-
-    ========================================
-    MDA ACTIVE DIRECTORY GENERATOR
-    ========================================
-    JSON File: .\ad_schema.json
-    Base DN: DC=MDA,DC=com
-    Root OU: MDA
-    ========================================
-
-    ========================================
-    Validating JSON Schema
-    ========================================
-    [SCHEMA VALID] No blocking errors detected.
-
-    ========================================
-    Creating MDA Organizational Units
-    ========================================
-    [CREATING OU] MDA
-    [CREATING OU] Users
-    [CREATING OU] Privileged Accounts
-    [CREATING OU] Groups
-    [CREATING OU] Workstations
-    [CREATING OU] Servers
-    [CREATING OU] Surveillance
-    [CREATING OU] Surveillance
-    [CREATING OU] Information Technology
-    [CREATING OU] Information Technology
-    [CREATING OU] Evaluation
-    [CREATING OU] Evaluation
-    [CREATING OU] Registration
-    [CREATING OU] Registration
-    [CREATING OU] Distribution
-    [CREATING OU] Distribution
-
-    ========================================
-    Creating MDA Security Groups
-    ========================================
-    [CREATING GROUP] MDA_Surveillance
-    [CREATING GROUP] MDA_Surveillance_Chiefs
-    [CREATING GROUP] MDA_Surveillance_Admins
-    [CREATING GROUP] MDA_IT
-    [CREATING GROUP] MDA_IT_Chiefs
-    [CREATING GROUP] MDA_IT_Admins
-    [CREATING GROUP] MDA_Evaluation
-    [CREATING GROUP] MDA_Evaluation_Chiefs
-    [CREATING GROUP] MDA_Evaluation_Admins
-    [CREATING GROUP] MDA_Registration
-    [CREATING GROUP] MDA_Registration_Chiefs
-    [CREATING GROUP] MDA_Registration_Admins
-    [CREATING GROUP] MDA_Distribution
-    [CREATING GROUP] MDA_Distribution_Chiefs
-    [CREATING GROUP] MDA_Distribution_Admins
-
-    ----------------------------------------
-    Processing: Arthur River
-    Username: arthur_river
-    Department: Surveillance
-    Position: Surveillance Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Arthur River (arthur_river)
-    [ADDING TO GROUP] arthur_river -> MDA_Surveillance_Chiefs
-    [ADDING TO GROUP] arthur_river -> MDA_Surveillance
-
-    ----------------------------------------
-    Processing: Arthur River
-    Username: adm_arthur_river
-    Department: Surveillance
-    Position: Surveillance Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Surveillance,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Arthur River (adm_arthur_river)
-    [ADDING TO GROUP] adm_arthur_river -> MDA_Surveillance_Admins
-
-    ----------------------------------------
-    Processing: Scott Kang
-    Username: scott_kang
-    Department: Surveillance
-    Position: Surveillance Agent
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Scott Kang (scott_kang)
-    [ADDING TO GROUP] scott_kang -> MDA_Surveillance
-
-    ----------------------------------------
-    Processing: Robert Gordon
-    Username: robert_gordon
-    Department: Information Technology
-    Position: Information Technology Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Robert Gordon (robert_gordon)
-    [ADDING TO GROUP] robert_gordon -> MDA_IT_Chiefs
-    [ADDING TO GROUP] robert_gordon -> MDA_IT
-
-    ----------------------------------------
-    Processing: Robert Gordon
-    Username: adm_robert_gordon
-    Department: Information Technology
-    Position: Information Technology Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Information Technology,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Robert Gordon (adm_robert_gordon)
-    [ADDING TO GROUP] adm_robert_gordon -> MDA_IT_Admins
-
-    ----------------------------------------
-    Processing: Luke Gibson
-    Username: luke_gibson
-    Department: Information Technology
-    Position: Information Technology Technician
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Luke Gibson (luke_gibson)
-    [ADDING TO GROUP] luke_gibson -> MDA_IT
-
-    ----------------------------------------
-    Processing: Lucy Hill
-    Username: lucy_hill
-    Department: Evaluation
-    Position: Evaluation Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Lucy Hill (lucy_hill)
-    [ADDING TO GROUP] lucy_hill -> MDA_Evaluation_Chiefs
-    [ADDING TO GROUP] lucy_hill -> MDA_Evaluation
-
-    ----------------------------------------
-    Processing: Lucy Hill
-    Username: adm_lucy_hill
-    Department: Evaluation
-    Position: Evaluation Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Evaluation,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Lucy Hill (adm_lucy_hill)
-    [ADDING TO GROUP] adm_lucy_hill -> MDA_Evaluation_Admins
-
-    ----------------------------------------
-    Processing: Brentley Terry
-    Username: brentley_terry
-    Department: Evaluation
-    Position: Evaluation Specialist
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Brentley Terry (brentley_terry)
-    [ADDING TO GROUP] brentley_terry -> MDA_Evaluation
-
-    ----------------------------------------
-    Processing: Truman Sweet
-    Username: truman_sweet
-    Department: Registration
-    Position: Registration Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Truman Sweet (truman_sweet)
-    [ADDING TO GROUP] truman_sweet -> MDA_Registration_Chiefs
-    [ADDING TO GROUP] truman_sweet -> MDA_Registration
-
-    ----------------------------------------
-    Processing: Truman Sweet
-    Username: adm_truman_sweet
-    Department: Registration
-    Position: Registration Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Registration,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Truman Sweet (adm_truman_sweet)
-    [ADDING TO GROUP] adm_truman_sweet -> MDA_Registration_Admins
-
-    ----------------------------------------
-    Processing: Jess Martin
-    Username: jess_martin
-    Department: Registration
-    Position: Registration Specialist
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Jess Martin (jess_martin)
-    [ADDING TO GROUP] jess_martin -> MDA_Registration
-
-    ----------------------------------------
-    Processing: Milan Schmidt
-    Username: milan_schmidt
-    Department: Distribution
-    Position: Distribution Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Milan Schmidt (milan_schmidt)
-    [ADDING TO GROUP] milan_schmidt -> MDA_Distribution_Chiefs
-    [ADDING TO GROUP] milan_schmidt -> MDA_Distribution
-
-    ----------------------------------------
-    Processing: Milan Schmidt
-    Username: adm_milan_schmidt
-    Department: Distribution
-    Position: Distribution Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Distribution,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Milan Schmidt (adm_milan_schmidt)
-    [ADDING TO GROUP] adm_milan_schmidt -> MDA_Distribution_Admins
-
-    ----------------------------------------
-    Processing: Alina Cox
-    Username: alina_cox
-    Department: Distribution
-    Position: Distribution Specialist
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
-    [CREATING USER] Alina Cox (alina_cox)
-    [ADDING TO GROUP] alina_cox -> MDA_Distribution
-
-    ========================================
-    MDA ACTIVE DIRECTORY SUMMARY
-    ========================================
-    Standard Accounts:   10
-    Privileged Accounts: 5
-    Total Accounts:      15
-    Security Groups:     15
-    ========================================
-
-    [COMPLETE] MDA Active Directory generation finished.
-    ```
-
-    - Verified groups. Parsed without errors as well.
-
-    ```shell
-    [192.168.244.155]: PS C:\windows\Tasks> Get-ADGroup
-
-    cmdlet Get-ADGroup at command pipeline position 1
-    Supply values for the following parameters:
-    (Type !? for Help.)
-    Filter: *
-
-
-    DistinguishedName : CN=Administrators,CN=Builtin,DC=MDA,DC=com
-    GroupCategory     : Security
-    GroupScope        : DomainLocal
-    Name              : Administrators
-    ObjectClass       : group
-    ObjectGUID        : 885e3cad-51f4-49e1-a9ac-60a2cc5a55bc
-    SamAccountName    : Administrators
-    SID               : S-1-5-32-544
-
-    ...
-    ```
-
-    - Verified Users. Parsed without errors.
-
-    ```shell
-    Get-ADUser
-
-    cmdlet Get-ADUser at command pipeline position 1
-    Supply values for the following parameters:
-    (Type !? for Help.)
-    Filter: *
-
-
-    DistinguishedName : CN=Administrator,CN=Users,DC=MDA,DC=com
-    Enabled           : True
-    GivenName         :
-    Name              : Administrator
-    ObjectClass       : user
-    ObjectGUID        : bf46ff40-12c4-41d0-8ae9-18cf1bf983c6
-    SamAccountName    : Administrator
-    SID               : S-1-5-21-4252272573-727251941-1119735190-500
-    Surname           :
-    UserPrincipalName :
-
-    DistinguishedName : CN=Guest,CN=Users,DC=MDA,DC=com
-    Enabled           : False
-    GivenName         :
-    Name              : Guest
-    ObjectClass       : user
-    ObjectGUID        : d5a8e6e4-04d5-43b0-91c5-afebd6df6c9c
-    SamAccountName    : Guest
-    SID               : S-1-5-21-4252272573-727251941-1119735190-501
-    Surname           :
-    UserPrincipalName :
-
-    ...
-    ```
-
-    - Now verifying if the automation can safely encounter an environment it has already built.
-
-    ```shell
-    ========================================
-    MDA ACTIVE DIRECTORY GENERATOR
-    ========================================
-    JSON File: .\ad_schema.json
-    Base DN: DC=MDA,DC=com
-    Root OU: MDA
-    ========================================
-
-    ========================================
-    Validating JSON Schema
-    ========================================
-    [SCHEMA VALID] No blocking errors detected.
-
-    ========================================
-    Creating MDA Organizational Units
-    ========================================
-    [OU EXISTS] MDA
-    [OU EXISTS] Users
-    [OU EXISTS] Privileged Accounts
-    [OU EXISTS] Groups
-    [OU EXISTS] Workstations
-    [OU EXISTS] Servers
-    [OU EXISTS] Surveillance
-    [OU EXISTS] Surveillance
-    [OU EXISTS] Information Technology
-    [OU EXISTS] Information Technology
-    [OU EXISTS] Evaluation
-    [OU EXISTS] Evaluation
-    [OU EXISTS] Registration
-    [OU EXISTS] Registration
-    [OU EXISTS] Distribution
-    [OU EXISTS] Distribution
-
-    ========================================
-    Creating MDA Security Groups
-    ========================================
-    [GROUP EXISTS] MDA_Surveillance
-    [GROUP EXISTS] MDA_Surveillance_Chiefs
-    [GROUP EXISTS] MDA_Surveillance_Admins
-    [GROUP EXISTS] MDA_IT
-    [GROUP EXISTS] MDA_IT_Chiefs
-    [GROUP EXISTS] MDA_IT_Admins
-    [GROUP EXISTS] MDA_Evaluation
-    [GROUP EXISTS] MDA_Evaluation_Chiefs
-    [GROUP EXISTS] MDA_Evaluation_Admins
-    [GROUP EXISTS] MDA_Registration
-    [GROUP EXISTS] MDA_Registration_Chiefs
-    [GROUP EXISTS] MDA_Registration_Admins
-    [GROUP EXISTS] MDA_Distribution
-    [GROUP EXISTS] MDA_Distribution_Chiefs
-    [GROUP EXISTS] MDA_Distribution_Admins
-
-    ----------------------------------------
-    Processing: Arthur River
-    Username: arthur_river
-    Department: Surveillance
-    Position: Surveillance Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] arthur_river
-    [MEMBERSHIP EXISTS] arthur_river -> MDA_Surveillance_Chiefs
-    [MEMBERSHIP EXISTS] arthur_river -> MDA_Surveillance
-
-    ----------------------------------------
-    Processing: Arthur River
-    Username: adm_arthur_river
-    Department: Surveillance
-    Position: Surveillance Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Surveillance,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] adm_arthur_river
-    [MEMBERSHIP EXISTS] adm_arthur_river -> MDA_Surveillance_Admins
-
-    ----------------------------------------
-    Processing: Scott Kang
-    Username: scott_kang
-    Department: Surveillance
-    Position: Surveillance Agent
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] scott_kang
-    [MEMBERSHIP EXISTS] scott_kang -> MDA_Surveillance
-
-    ----------------------------------------
-    Processing: Robert Gordon
-    Username: robert_gordon
-    Department: Information Technology
-    Position: Information Technology Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] robert_gordon
-    [MEMBERSHIP EXISTS] robert_gordon -> MDA_IT_Chiefs
-    [MEMBERSHIP EXISTS] robert_gordon -> MDA_IT
-
-    ----------------------------------------
-    Processing: Robert Gordon
-    Username: adm_robert_gordon
-    Department: Information Technology
-    Position: Information Technology Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Information Technology,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] adm_robert_gordon
-    [MEMBERSHIP EXISTS] adm_robert_gordon -> MDA_IT_Admins
-
-    ----------------------------------------
-    Processing: Luke Gibson
-    Username: luke_gibson
-    Department: Information Technology
-    Position: Information Technology Technician
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] luke_gibson
-    [MEMBERSHIP EXISTS] luke_gibson -> MDA_IT
-
-    ----------------------------------------
-    Processing: Lucy Hill
-    Username: lucy_hill
-    Department: Evaluation
-    Position: Evaluation Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] lucy_hill
-    [MEMBERSHIP EXISTS] lucy_hill -> MDA_Evaluation_Chiefs
-    [MEMBERSHIP EXISTS] lucy_hill -> MDA_Evaluation
-
-    ----------------------------------------
-    Processing: Lucy Hill
-    Username: adm_lucy_hill
-    Department: Evaluation
-    Position: Evaluation Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Evaluation,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] adm_lucy_hill
-    [MEMBERSHIP EXISTS] adm_lucy_hill -> MDA_Evaluation_Admins
-
-    ----------------------------------------
-    Processing: Brentley Terry
-    Username: brentley_terry
-    Department: Evaluation
-    Position: Evaluation Specialist
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] brentley_terry
-    [MEMBERSHIP EXISTS] brentley_terry -> MDA_Evaluation
-
-    ----------------------------------------
-    Processing: Truman Sweet
-    Username: truman_sweet
-    Department: Registration
-    Position: Registration Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] truman_sweet
-    [MEMBERSHIP EXISTS] truman_sweet -> MDA_Registration_Chiefs
-    [MEMBERSHIP EXISTS] truman_sweet -> MDA_Registration
-
-    ----------------------------------------
-    Processing: Truman Sweet
-    Username: adm_truman_sweet
-    Department: Registration
-    Position: Registration Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Registration,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] adm_truman_sweet
-    [MEMBERSHIP EXISTS] adm_truman_sweet -> MDA_Registration_Admins
-
-    ----------------------------------------
-    Processing: Jess Martin
-    Username: jess_martin
-    Department: Registration
-    Position: Registration Specialist
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] jess_martin
-    [MEMBERSHIP EXISTS] jess_martin -> MDA_Registration
-
-    ----------------------------------------
-    Processing: Milan Schmidt
-    Username: milan_schmidt
-    Department: Distribution
-    Position: Distribution Chief
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] milan_schmidt
-    [MEMBERSHIP EXISTS] milan_schmidt -> MDA_Distribution_Chiefs
-    [MEMBERSHIP EXISTS] milan_schmidt -> MDA_Distribution
-
-    ----------------------------------------
-    Processing: Milan Schmidt
-    Username: adm_milan_schmidt
-    Department: Distribution
-    Position: Distribution Chief
-    Account Type: privileged
-    ----------------------------------------
-    OU: OU=Distribution,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] adm_milan_schmidt
-    [MEMBERSHIP EXISTS] adm_milan_schmidt -> MDA_Distribution_Admins
-
-    ----------------------------------------
-    Processing: Alina Cox
-    Username: alina_cox
-    Department: Distribution
-    Position: Distribution Specialist
-    Account Type: standard
-    ----------------------------------------
-    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
-    [USER EXISTS] alina_cox
-    [MEMBERSHIP EXISTS] alina_cox -> MDA_Distribution
-
-    ========================================
-    MDA ACTIVE DIRECTORY SUMMARY
-    ========================================
-    Standard Accounts:   10
-    Privileged Accounts: 5
-    Total Accounts:      15
-    Security Groups:     15
-    ========================================
-
-    [COMPLETE] MDA Active Directory generation finished.
-    ```
-
-    - The second run shows that the script recognized every existing OU, security group, user account, and group membership instead of trying to recreate them.
-    - It can be rerun safely against the current state without producing duplicates or obvious configuration drift.
-
-3. Signed into a user.
-
-    - Signed into Arthur River's account. Prompted me to change my password.
-    - Attempted password as "AgentRiverGUH," but it rejected it, asking for a stronger password.
-
-    ```prompt
-    New Password: AMD_R!v3rAnrth3r_123!
-    ```
-
-    - Successfully changed password and signed me in.
-    - Attempted to use Terminal as admin:
-
-    ```prompt:
-    user: adm_river_arthur
-    password: ADM_R!v3rArthnr_123!
-    ```
-
-    - The requested operation needs elevation. I also messed up the password cause its "amd" and not "adm".
-    - I went to DC1 and entered a command to change the password to the correct format and spelling.
-
-    ```shell
-    PS C:\Windows\Tasks> Set-ADAccountPassword `-Identity "adm_arthur_river" `-Reset `-NewPassword (ConvertTo-SecureString "ADM_R!v3rArthnr_123!" -AsPlainText -Force)
-    ```
-
-    - Password change successful, and login was successful.
+    - The current `gen_ad.ps1` should simply ignore those extra fields because its validator only cares about the properties it actually uses.
+    - That means the vulnerable schema remains compatible while retaining enough evidence for later analysis.
+    - I noticed I wes not using the seed function, like I wanted to, but that's okay.

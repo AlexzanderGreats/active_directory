@@ -1,69 +1,71 @@
-# 03 Generating vulnerable schema
+# 4 Testing Program & Experimenting
 
-1. John Hammond codes a repeatable AD lab.
+1. Took a break after writing the code, and today I tested it.
 
-    - Randomized identities and weak credentials make later authorized exercises.
-        - Domain enumeration, credentials, and testing domainstrations.
-    - The script is not polished by the end, though.
-        - Password-policy handling, cleanup/removal tooling, and reliable schema imports still need refinement.
-    - For me, the randomization concepts are worthwhile.
-        - External first/last-name lists, randomized group assignment, generating PowerShell objects/hashtables, exporting them through ConvertTo-Json, duplicate prevention, and dealing correctly with array serialization are all useful PowerShell exercises.
-    - I am going to make it match my schema, rather than regressing it.
-    - I also discovered that `MDA.com` rejects inadequate passwords, so I am going to keep that and work around it.
-    - I am going to first let the generator encounter that problem and then document it.
-    - I am going to decide what vulnerability I am deliberately introducing and why second.
-        - A vulnerable lab is more educational when I understand which control I weakened, what threat it enables, and how I would remediate it, rather than simply switching security features off until attacks work.
-
-2. The plan!
-
-    ```Status
-    BASELINE MDA
-    Secure, documented configuration
-            │
-            ▼
-    Introduce controlled misconfiguration
-            │
-            ▼
-    VULNERABLE MDA
-            │
-            ▼
-    Discover / Exploit / Detect
-            │
-            ▼
-    Remediate
-            │
-            ▼
-    Verify restored baseline
-    ```
-
-    - As for the `100 users` idea, I am aiming for starting out with 20 users distributed through the departments I already have for the MDA.
-    - I will probably want to impoment `Get-Random`, mutable collections, randomized users/groups/passwords, hashtables/objects, duplicate prevention, JSON serialization, array handling, schema validation, and live debigging/ tuning.
-    - I however want to generated users that remain in standard accounts, job titles are department-appropriate, and I don't wnt the script to randomly hands somebody `*_Admins` or `*_Chiefs` membership.
-    - By default, I want the generator to create 20 users, with 30% receiving intentionally guessable but potentially policy-compliant lab passwords such as `Summer2026!`.
-    - The account can still provision while remaining intentionally weak enough to become a later security finding.
-    - I will also want controls to escape luck, such as employing a `seed`, or something to recreate a simulation and retest it against what I already have in the `MDA.com` domain.
-
-3. Testing the code.
-
-    - To the code, I added a failure mode for the code, just for the sake of easily undersanding what works and doesn't.
+    - I copied the code over into the DC, and ran it.
+    - It was supposed to create a new json file, named `out.json`. Which it did, but it failed on some other stuff
 
     ```shell
-    -IncludePolicyFailures
+    Cannot bind argument to parameter 'ExistingUsernames' because it is an empty collection.
     ```
 
-    - It should allow me to control the number of deliberately inadequate passwords like `password` or `12345678` to appear.
-    - Those may then fail when my existing `gen_ad.ps1` tries to provision them against `MDA.com`.
-    - Allowing me to reproduce one of the tutorial's lessons without having the generator silently weaken the domain.
-    - I also have it generating a new `JSON` file at whatever path I supply with `-OutputPath`.
-    - Another important difference from the baseline I also added metadata to generated users.
+    - Did not do what I wanted, but hey. At least its telling us what's wrong.
+    - The generator failed while creating the new randomized schema. The key error is: `Cannot bind argument to parameter 'ExistingUsernames' because it is an empty collection.`
+    - I have deemed the failure occures at line 435, where the script calls:
 
-    ```shell
-    {
-    "generated": true,
-    "password_classification": "weak",
-    "intentional_vulnerability": "Guessable lab password that may satisfy complexity requirements but remains poor security practice."
+    ```script
+    $user = New-MDARandomUser -ExistingUsernames $existingUsernames
+    ```
+
+    - I had to do some finagling, but I also recovered the `out.json` file it created to look at. And I can confirm, it did not generate what I wanted.
+    - I will need to modify the `New-MDARandomUser` so that an empty username collection is valid on the first iteration.
+    - Replaced the old iteration with this:
+
+    ```script
+    for ($i = 1; $i -le $UserCount; $i++) {
+
+    Write-Output ""
+    Write-Output "----------------------------------------"
+    Write-Output "Generating user $i of $UserCount"
+    Write-Output "----------------------------------------"
+
+    $user = New-MDARandomUser `
+        -ExistingUsernames $existingUsernames
+
+        if ($null -eq $user) {
+            Write-Warning "[FAILED] User generation returned no object."
+            continue
+        }
+
+    # Add the generated user to the output collection
+    [void]$generatedUsers.Add($user)
+
+    # Track the username so future iterations cannot generate duplicates
+    [void]$existingUsernames.Add($user.username)
+
+    Write-Output "[GENERATED] Username: $($user.username)"
+    Write-Output "[GENERATED] Name: $($user.first_name) $($user.last_name)"
+    Write-Output "[GENERATED] Department: $($user.department)"
+    Write-Output "[GENERATED] Job Title: $($user.job_title)"
+    Write-Output "[GENERATED] Password Class: $($user.password_classification)"
     }
     ```
 
-    - The current `gen_ad.ps1` should simply ignore those extra fields because its validator only cares about the properties it actually uses.
-    - That means the vulnerable schema remains compatible while retaining enough evidence for later analysis.
+    - It keeps the existing structure, preserves the username collection, and makes the generated object creation easier to debug now.
+    - Now I need to replace the old version of the script with the new on on the DC, I'll attempt to delete the old `generate_vulnerable_schema.ps1` but keep the `out.json` file.
+    - I'll name the new json file it creats `vuln_schema.json`.
+
+2. Testing new script & generating `vuln_schema.json`.
+
+    - Okay, removed the old, put in the new.
+    - Tested the file, and got a similar error message.
+
+    - Basically, the loop was not the real problem. It seems now that the error occures before `New-MDARandomUser` can execute.
+
+    ```shell
+    Cannot bind argument to parameter 'ExistingUsernames' because it is an empty collection.
+    ```
+
+    - It appears to be the same problem, actually, I just didn't patch it correctly.
+    - Added a proper handeling of the iteration, since it was creating nothing, then upset there was nothing still, until it "completed" the 20 users.
+    - So now, I am going to repeat the test again, and see what changes.
