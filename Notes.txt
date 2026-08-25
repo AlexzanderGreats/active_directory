@@ -1,10 +1,21 @@
-$session = New-PSSession -ComputerName 192.168.244.155 -Credential $Credential
+    ```shell
+    $cred =
+    ``` 
 
-Copy-Item `
+    ```shell
+    $dc = New-PSSession 
+    ```
 
->>     -FromSession $session `
+    ```shell
+    > $session = New-PSSession $dc -Credential $cred
+    ```
 
->>     -Path "C:\Windows\Tasks\[filename]" `
+    ```shell
+    Copy-Item `
 
->>     -Destination "C:\Users\Local_Admin\Documents\GitHub\active_directory\Files\[filename]"
+    >>     -FromSession $session `
 
+    >>     -Path "C:\Windows\Tasks\[filename]" `
+
+    >>     -Destination "C:\Users\Local_Admin\Documents\GitHub\active_directory\Files\[filename]"
+    ```

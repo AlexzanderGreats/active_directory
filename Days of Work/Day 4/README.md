@@ -67,4 +67,3 @@
 
     - The current `gen_ad.ps1` should simply ignore those extra fields because its validator only cares about the properties it actually uses.
     - That means the vulnerable schema remains compatible while retaining enough evidence for later analysis.
-    - I noticed I wes not using the seed function, like I wanted to, but that's okay.
