@@ -432,10 +432,30 @@ $existingUsernames = [System.Collections.Generic.HashSet[string]]::new()
 
 for ($i = 1; $i -le $UserCount; $i++) {
 
-    $user = New-MDARandomUser -ExistingUsernames $existingUsernames
-    [void] $generatedUsers.Add($user)
+    Write-Output ""
+    Write-Output "----------------------------------------"
+    Write-Output "Generating user $i of $UserCount"
+    Write-Output "----------------------------------------"
 
-    Write-Output "[GENERATED] $($user.username) -> $($user.department) / $($user.job_title) / $($user.password_classification)"
+    $user = New-MDARandomUser `
+        -ExistingUsernames $existingUsernames
+
+    if ($null -eq $user) {
+        Write-Warning "[FAILED] User generation returned no object."
+        continue
+    }
+
+    # Add the generated user to the output collection
+    [void]$generatedUsers.Add($user)
+
+    # Track the username so future iterations cannot generate duplicates
+    [void]$existingUsernames.Add($user.username)
+
+    Write-Output "[GENERATED] Username: $($user.username)"
+    Write-Output "[GENERATED] Name: $($user.first_name) $($user.last_name)"
+    Write-Output "[GENERATED] Department: $($user.department)"
+    Write-Output "[GENERATED] Job Title: $($user.job_title)"
+    Write-Output "[GENERATED] Password Class: $($user.password_classification)"
 }
 
 
