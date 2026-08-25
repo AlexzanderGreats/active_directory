@@ -445,10 +445,8 @@ for ($i = 1; $i -le $UserCount; $i++) {
         continue
     }
 
-    # Add the generated user to the output collection
     [void]$generatedUsers.Add($user)
 
-    # Track the username so future iterations cannot generate duplicates
     [void]$existingUsernames.Add($user.username)
 
     Write-Output "[GENERATED] Username: $($user.username)"
