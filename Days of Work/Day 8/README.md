@@ -177,3 +177,6 @@
     - Now with that functionality added to `gen_ad.ps1`, we can move onto modifying `remove_mda.ps1` by requiring ownership metadata before removing an object.
 
     - Besides, that, this is a decent excercise. I'm not just generating a fresh environment anymore, I'm changing the managment model of an environment that already exists.
+
+    - Implomented the changes both `gen_ad.ps1`, `ad_schma.json`, and `remove_mada.ps1`.
+    - I am not going to copy them over from the Managment controller/ workstation into the Domain Controller, and go from there.
