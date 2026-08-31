@@ -81,6 +81,23 @@ if ($PSBoundParameters.ContainsKey("Seed")) {
 
 
 # ============================================================
+# SCHEMA METADATA
+# ============================================================
+
+$SchemaMetadata = [ordered]@{
+    schema_name = "MDA Vulnerable Active Directory Baseline"
+    schema_version = "1.0"
+    generated = $true
+    generator = "gen_vuln_schema.ps1"
+    generator_version = "1.0"
+    organization = "Mythical Dungeon Association"
+    domain = "MDA.com"
+    root_ou = "MDA"
+    ownership_tag = "MDA-LAB"
+}
+
+
+# ============================================================
 # SOURCE DATA
 # ============================================================
 
@@ -354,13 +371,36 @@ function Test-MDAGeneratedSchema {
         [PSCustomObject[]] $Users,
 
         [Parameter(Mandatory = $true)]
-        [object[]] $Groups
+        [object[]] $Groups,
+
+        [Parameter(Mandatory = $true)]
+        [hashtable] $Metadata
     )
 
     Write-Output ""
     Write-Output "========================================"
     Write-Output "Validating Generated Schema"
     Write-Output "========================================"
+
+    if (-not $Metadata) {
+        throw "Schema is missing required metadata."
+    }
+
+    foreach ($field in @(
+        "schema_name",
+        "schema_version",
+        "generated",
+        "generator",
+        "generator_version",
+        "organization",
+        "domain",
+        "root_ou",
+        "ownership_tag"
+    )) {
+        if (-not $Metadata[$field]) {
+            throw "Schema metadata is missing $field."
+        }
+    }
 
     $validDepartments = @(
         "Surveillance",
@@ -442,7 +482,8 @@ for ($i = 1; $i -le $UserCount; $i++) {
 
 Test-MDAGeneratedSchema `
     -Users @($generatedUsers) `
-    -Groups $groups
+    -Groups $groups `
+    -Metadata $SchemaMetadata
 
 
 # ============================================================
@@ -481,6 +522,15 @@ Write-Output "========================================"
 
 $schema = [ordered]@{
     metadata = [ordered]@{
+        schema_name = $SchemaMetadata.schema_name
+        schema_version = $SchemaMetadata.schema_version
+        generated = $true
+        generator = $SchemaMetadata.generator
+        generator_version = $SchemaMetadata.generator_version
+        organization = $SchemaMetadata.organization
+        domain = $SchemaMetadata.domain
+        root_ou = $SchemaMetadata.root_ou
+        ownership_tag = $SchemaMetadata.ownership_tag
         schema_type = "MDA vulnerable lab schema"
         generated_at = (Get-Date).ToString("o")
         user_count = $generatedUsers.Count
