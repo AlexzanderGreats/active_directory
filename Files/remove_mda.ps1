@@ -62,6 +62,7 @@ Import-Module ActiveDirectory -ErrorAction Stop
 $DomainDN = (Get-ADDomain).DistinguishedName
 $RootOUName = "MDA"
 $RootOU = "OU=$RootOUName,$DomainDN"
+$OwnershipTag = $null
 
 # ============================================================
 # Helper Functions
@@ -101,6 +102,22 @@ function Test-ObjectExists {
     }
 }
 
+function Test-MDAOwnershipMarker {
+    param(
+        [AllowNull()]
+        [string]$Description,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Tag
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Description)) {
+        return $false
+    }
+
+    return $Description.Contains($Tag)
+}
+
 # ============================================================
 # Banner
 # ============================================================
@@ -110,6 +127,7 @@ Write-Section "MDA ACTIVE DIRECTORY CONTROLLED TEARDOWN"
 Write-Output "JSON File:       $JSONFile"
 Write-Output "Domain DN:       $DomainDN"
 Write-Output "Root OU:         $RootOU"
+Write-Output "Ownership Tag:   $OwnershipTag"
 Write-Output "Remove OUs:      $RemoveOUs"
 Write-Output "Remove Root OU:  $RemoveRootOU"
 Write-Output "WhatIf:          $WhatIfPreference"
@@ -132,6 +150,30 @@ catch {
     throw "Unable to parse JSON file: $JSONFile"
 }
 
+if (-not $schema.metadata) {
+    throw "Schema is missing required metadata."
+}
+
+if (-not $schema.metadata.ownership_tag) {
+    throw "Schema metadata is missing ownership_tag."
+}
+
+if (-not $schema.metadata.schema_version) {
+    throw "Schema metadata is missing schema_version."
+}
+
+if (-not $schema.metadata.generator) {
+    throw "Schema metadata is missing generator."
+}
+
+if (-not $schema.metadata.generator_version) {
+    throw "Schema metadata is missing generator_version."
+}
+
+if (-not $schema.metadata.root_ou) {
+    throw "Schema metadata is missing root_ou."
+}
+
 if ($null -eq $schema.users) {
     throw "Schema does not contain a users collection."
 }
@@ -139,6 +181,10 @@ if ($null -eq $schema.users) {
 if ($null -eq $schema.groups) {
     throw "Schema does not contain a groups collection."
 }
+
+$OwnershipTag = $schema.metadata.ownership_tag
+$RootOUName = $schema.metadata.root_ou
+$RootOU = "OU=$RootOUName,$DomainDN"
 
 Write-Action "SCHEMA VALID" "MDA schema loaded successfully."
 
@@ -185,11 +231,12 @@ foreach ($username in $users) {
 
         $user = Get-ADUser `
             -Identity $username `
+            -Properties Description `
             -ErrorAction Stop
 
         # Safety boundary:
-        # Only remove users located underneath MDA.
-        if ($user.DistinguishedName -like "*,$RootOU") {
+        # Only remove users explicitly marked by the MDA ownership tag.
+        if ($user.DistinguishedName -like "*,$RootOU" -and (Test-MDAOwnershipMarker -Description $user.Description -Tag $OwnershipTag)) {
 
             $resolvedUsers += $user
 
@@ -199,7 +246,7 @@ foreach ($username in $users) {
         else {
 
             Write-Action "SKIP USER" `
-                "$username -> Outside MDA OU hierarchy"
+                "$username -> Missing ownership marker or outside MDA OU hierarchy"
         }
     }
     catch {
@@ -222,11 +269,12 @@ foreach ($groupName in $groups) {
 
         $group = Get-ADGroup `
             -Identity $groupName `
+            -Properties Description `
             -ErrorAction Stop
 
         # Safety boundary:
-        # Only remove groups with the expected MDA naming convention.
-        if ($group.Name -like "MDA_*") {
+        # Only remove groups explicitly marked by the MDA ownership tag.
+        if ((Test-MDAOwnershipMarker -Description $group.Description -Tag $OwnershipTag)) {
 
             $resolvedGroups += $group
 
@@ -236,7 +284,7 @@ foreach ($groupName in $groups) {
         else {
 
             Write-Action "SKIP GROUP" `
-                "$groupName -> Does not match MDA naming boundary"
+                "$groupName -> Missing ownership marker"
         }
     }
     catch {
@@ -374,8 +422,12 @@ if ($RemoveOUs) {
         $ous = Get-ADOrganizationalUnit `
             -SearchBase $RootOU `
             -SearchScope Subtree `
+            -Properties Description `
             -Filter * `
             -ErrorAction Stop |
+            Where-Object {
+                Test-MDAOwnershipMarker -Description $_.Description -Tag $OwnershipTag
+            } |
             Sort-Object `
                 { $_.DistinguishedName.Length } `
                 -Descending
@@ -461,7 +513,14 @@ if ($RemoveRootOU) {
 
             $rootObject = Get-ADOrganizationalUnit `
                 -Identity $RootOU `
+                -Properties Description `
                 -ErrorAction Stop
+
+            if (-not (Test-MDAOwnershipMarker -Description $rootObject.Description -Tag $OwnershipTag)) {
+                Write-Action "ROOT OU RETAINED" `
+                    "$RootOU -> Missing ownership marker"
+                return
+            }
 
             if ($PSCmdlet.ShouldProcess(
                 $RootOU,

@@ -173,4 +173,4 @@
     - With such a necessary identifier for the `remove_mda.ps1`, I decided tow ork on `ad_schema.json` and `gen_ad.ps1` to imploment a feature to update the existing schema.
     - I particularlly want to imploment the metadata to the core users and accounts so when push comes to shove, I can avoid deleting them if I wanted to keep them.
 
-    - .
+    - I added a `metadata` section on the `ad_schema.json` file already, now I'm moving onto updating `gen_ad.ps1` with the features I want to automate the updates.

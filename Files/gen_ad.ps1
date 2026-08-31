@@ -67,6 +67,31 @@ if (-not (Test-Path $JSONfile)) {
 
 $json = Get-Content $JSONfile -Raw | ConvertFrom-Json
 
+if (-not $json.metadata) {
+    throw "Schema is missing required metadata."
+}
+
+$ownershipTag = $json.metadata.ownership_tag
+$schemaVersion = $json.metadata.schema_version
+$generatorName = $json.metadata.generator
+$generatorVersion = $json.metadata.generator_version
+
+if (-not $ownershipTag) {
+    throw "Schema metadata is missing ownership_tag."
+}
+
+if (-not $schemaVersion) {
+    throw "Schema metadata is missing schema_version."
+}
+
+if (-not $generatorName) {
+    throw "Schema metadata is missing generator."
+}
+
+if (-not $generatorVersion) {
+    throw "Schema metadata is missing generator_version."
+}
+
 
 # ============================================================
 # HELPER FUNCTIONS
@@ -93,6 +118,75 @@ function Get-MDAUserByUsername {
 
     return $Json.users | Where-Object {
         $_.username -eq $Username
+    }
+}
+
+
+function Get-MDAOwnershipDescription {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $ObjectType,
+
+        [Parameter(Mandatory = $true)]
+        [string] $ObjectName
+    )
+
+    return "$ownershipTag | $ObjectType | $ObjectName | Schema $schemaVersion | $generatorName $generatorVersion"
+}
+
+
+function Set-MDAOwnershipMetadata {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $ObjectType,
+
+        [Parameter(Mandatory = $true)]
+        [string] $ObjectName,
+
+        [Parameter(Mandatory = $true)]
+        [string] $ObjectIdentity,
+
+        [AllowNull()]
+        [string] $ExistingDescription
+    )
+
+    $ownershipDescription = Get-MDAOwnershipDescription `
+        -ObjectType $ObjectType `
+        -ObjectName $ObjectName
+
+    if ($ExistingDescription -and $ExistingDescription.Contains($ownershipTag)) {
+        Write-Output "[OWNERSHIP EXISTS] $ObjectName"
+        return
+    }
+
+    $newDescription = if ($ExistingDescription) {
+        "$ExistingDescription; $ownershipDescription"
+    }
+    else {
+        $ownershipDescription
+    }
+
+    Write-Output "[OWNERSHIP ADDED] $ObjectName"
+
+    switch ($ObjectType) {
+        "OU" {
+            Set-ADOrganizationalUnit `
+                -Identity $ObjectIdentity `
+                -Description $newDescription
+        }
+        "Group" {
+            Set-ADGroup `
+                -Identity $ObjectIdentity `
+                -Description $newDescription
+        }
+        "User" {
+            Set-ADUser `
+                -Identity $ObjectIdentity `
+                -Description $newDescription
+        }
+        default {
+            throw "Unsupported object type '$ObjectType' for ownership metadata update."
+        }
     }
 }
 
@@ -175,22 +269,35 @@ function New-MDAOrganizationalUnit {
         -Filter "Name -eq '$Name'" `
         -SearchBase $Path `
         -SearchScope OneLevel `
+        -Properties Description `
         -ErrorAction SilentlyContinue
 
     if ($existingOU) {
 
         Write-Output "[OU EXISTS] $Name"
+        Set-MDAOwnershipMetadata `
+            -ObjectType "OU" `
+            -ObjectName $Name `
+            -ObjectIdentity $existingOU.DistinguishedName `
+            -ExistingDescription $existingOU.Description
 
+        return
     }
-    else {
 
-        Write-Output "[CREATING OU] $Name"
+    $ownershipDescription = Get-MDAOwnershipDescription `
+        -ObjectType "OU" `
+        -ObjectName $Name
 
-        New-ADOrganizationalUnit `
-            -Name $Name `
-            -Path $Path `
-            -ProtectedFromAccidentalDeletion $true
-    }
+    Write-Output "[CREATING OU] $Name"
+
+    $newOU = New-ADOrganizationalUnit `
+        -Name $Name `
+        -Path $Path `
+        -ProtectedFromAccidentalDeletion $true
+
+    Set-ADOrganizationalUnit `
+        -Identity $newOU.DistinguishedName `
+        -Description $ownershipDescription
 }
 
 
@@ -261,14 +368,23 @@ function New-MDAGroup {
     )
 
     $groupName = $GroupObject.name
+    $ownershipDescription = Get-MDAOwnershipDescription `
+        -ObjectType "Group" `
+        -ObjectName $groupName
 
     $existingGroup = Get-ADGroup `
         -Filter "SamAccountName -eq '$groupName'" `
+        -Properties Description `
         -ErrorAction SilentlyContinue
 
     if ($existingGroup) {
 
         Write-Output "[GROUP EXISTS] $groupName"
+        Set-MDAOwnershipMetadata `
+            -ObjectType "Group" `
+            -ObjectName $groupName `
+            -ObjectIdentity $existingGroup.DistinguishedName `
+            -ExistingDescription $existingGroup.Description
         return
     }
 
@@ -280,7 +396,7 @@ function New-MDAGroup {
         -GroupCategory Security `
         -GroupScope Global `
         -Path "OU=Groups,OU=$RootOU,$BaseDN" `
-        -Description "MDA security group: $groupName"
+        -Description $ownershipDescription
 }
 
 
@@ -312,14 +428,23 @@ function New-MDAUser {
 
     $username = $UserObject.username
     $fullName = Get-MDAFullName -UserObject $UserObject
+    $ownershipDescription = Get-MDAOwnershipDescription `
+        -ObjectType "User" `
+        -ObjectName $username
 
     $existingUser = Get-ADUser `
         -Filter "SamAccountName -eq '$username'" `
+        -Properties Description `
         -ErrorAction SilentlyContinue
 
     if ($existingUser) {
 
         Write-Output "[USER EXISTS] $username"
+        Set-MDAOwnershipMetadata `
+            -ObjectType "User" `
+            -ObjectName $username `
+            -ObjectIdentity $existingUser.DistinguishedName `
+            -ExistingDescription $existingUser.Description
         return
     }
 
@@ -340,6 +465,7 @@ function New-MDAUser {
         -UserPrincipalName "$username@$((Get-ADDomain).DNSRoot)" `
         -Department $UserObject.department `
         -Title $UserObject.job_title `
+        -Description $ownershipDescription `
         -Path $OU `
         -AccountPassword $securePassword `
         -Enabled $true `
@@ -461,6 +587,38 @@ function Test-MDASchema {
     Write-Output "========================================"
     Write-Output "Validating JSON Schema"
     Write-Output "========================================"
+
+    if (-not $json.metadata) {
+        throw "Schema is missing required metadata."
+    }
+
+    if (-not $json.metadata.ownership_tag) {
+        throw "Schema metadata is missing ownership_tag."
+    }
+
+    if (-not $json.metadata.schema_version) {
+        throw "Schema metadata is missing schema_version."
+    }
+
+    if (-not $json.metadata.generator) {
+        throw "Schema metadata is missing generator."
+    }
+
+    if (-not $json.metadata.generator_version) {
+        throw "Schema metadata is missing generator_version."
+    }
+
+    if (-not $json.metadata.root_ou) {
+        throw "Schema metadata is missing root_ou."
+    }
+
+    if (-not $json.users) {
+        throw "Schema is missing the users collection."
+    }
+
+    if (-not $json.groups) {
+        throw "Schema is missing the groups collection."
+    }
 
     $validAccountTypes = @(
         "standard",
