@@ -174,3 +174,6 @@
     - I particularlly want to imploment the metadata to the core users and accounts so when push comes to shove, I can avoid deleting them if I wanted to keep them.
 
     - I added a `metadata` section on the `ad_schema.json` file already, now I'm moving onto updating `gen_ad.ps1` with the features I want to automate the updates.
+    - Now with that functionality added to `gen_ad.ps1`, we can move onto modifying `remove_mda.ps1` by requiring ownership metadata before removing an object.
+
+    - Besides, that, this is a decent excercise. I'm not just generating a fresh environment anymore, I'm changing the managment model of an environment that already exists.

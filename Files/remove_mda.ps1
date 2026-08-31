@@ -224,6 +224,7 @@ Write-Output "Groups discovered in schema: $($groups.Count)"
 Write-Section "Resolving MDA Users"
 
 $resolvedUsers = @()
+$skippedUsers = @()
 
 foreach ($username in $users) {
 
@@ -245,6 +246,12 @@ foreach ($username in $users) {
         }
         else {
 
+            $skippedUsers += [pscustomobject]@{
+                Name = $username
+                DistinguishedName = $user.DistinguishedName
+                Reason = "Missing ownership marker or outside MDA OU hierarchy"
+            }
+
             Write-Action "SKIP USER" `
                 "$username -> Missing ownership marker or outside MDA OU hierarchy"
         }
@@ -262,6 +269,7 @@ foreach ($username in $users) {
 Write-Section "Resolving MDA Groups"
 
 $resolvedGroups = @()
+$skippedGroups = @()
 
 foreach ($groupName in $groups) {
 
@@ -282,6 +290,12 @@ foreach ($groupName in $groups) {
                 "$groupName -> $($group.DistinguishedName)"
         }
         else {
+
+            $skippedGroups += [pscustomobject]@{
+                Name = $groupName
+                DistinguishedName = $group.DistinguishedName
+                Reason = "Missing ownership marker"
+            }
 
             Write-Action "SKIP GROUP" `
                 "$groupName -> Missing ownership marker"
@@ -310,6 +324,102 @@ if ($RemoveOUs) {
     Write-Output ""
     Write-Output "The following OU hierarchy is eligible:"
     Write-Output "  $RootOU"
+}
+
+Write-Section "OWNERSHIP-BASED SUMMARY"
+Write-Output "Eligible for removal (ownership tag present):"
+
+if ($resolvedUsers.Count -gt 0) {
+    foreach ($user in $resolvedUsers) {
+        Write-Output "  REMOVE USER: $($user.SamAccountName) -> $($user.DistinguishedName)"
+    }
+}
+else {
+    Write-Output "  (none)"
+}
+
+if ($resolvedGroups.Count -gt 0) {
+    foreach ($group in $resolvedGroups) {
+        Write-Output "  REMOVE GROUP: $($group.Name) -> $($group.DistinguishedName)"
+    }
+}
+else {
+    Write-Output "  (none)"
+}
+
+Write-Output ""
+Write-Output "Skipped because ownership metadata is missing or object is outside the MDA scope:"
+
+if ($skippedUsers.Count -gt 0) {
+    foreach ($user in $skippedUsers) {
+        Write-Output "  SKIP USER: $($user.Name) -> $($user.DistinguishedName) | $($user.Reason)"
+    }
+}
+else {
+    Write-Output "  (none)"
+}
+
+if ($skippedGroups.Count -gt 0) {
+    foreach ($group in $skippedGroups) {
+        Write-Output "  SKIP GROUP: $($group.Name) -> $($group.DistinguishedName) | $($group.Reason)"
+    }
+}
+else {
+    Write-Output "  (none)"
+}
+
+if ($RemoveOUs) {
+    $eligibleOUs = @()
+    $skippedOUs = @()
+
+    try {
+        $ouCandidates = Get-ADOrganizationalUnit `
+            -SearchBase $RootOU `
+            -SearchScope Subtree `
+            -Properties Description `
+            -Filter * `
+            -ErrorAction Stop |
+            Sort-Object `
+                { $_.DistinguishedName.Length } `
+                -Descending
+    }
+    catch {
+        $ouCandidates = @()
+    }
+
+    foreach ($ou in $ouCandidates) {
+        if (Test-MDAOwnershipMarker -Description $ou.Description -Tag $OwnershipTag) {
+            $eligibleOUs += $ou
+        }
+        else {
+            $skippedOUs += [pscustomobject]@{
+                Name = $ou.Name
+                DistinguishedName = $ou.DistinguishedName
+                Reason = "Missing ownership marker"
+            }
+        }
+    }
+
+    Write-Output ""
+    Write-Output "OU ownership-based summary:"
+
+    if ($eligibleOUs.Count -gt 0) {
+        foreach ($ou in $eligibleOUs) {
+            Write-Output "  REMOVE OU: $($ou.DistinguishedName)"
+        }
+    }
+    else {
+        Write-Output "  (none)"
+    }
+
+    if ($skippedOUs.Count -gt 0) {
+        foreach ($ou in $skippedOUs) {
+            Write-Output "  SKIP OU: $($ou.DistinguishedName) | $($ou.Reason)"
+        }
+    }
+    else {
+        Write-Output "  (none)"
+    }
 }
 
 # ============================================================
@@ -519,6 +629,7 @@ if ($RemoveRootOU) {
             if (-not (Test-MDAOwnershipMarker -Description $rootObject.Description -Tag $OwnershipTag)) {
                 Write-Action "ROOT OU RETAINED" `
                     "$RootOU -> Missing ownership marker"
+                Write-Output "  SKIP ROOT OU: $RootOU | Missing ownership marker"
                 return
             }
 
