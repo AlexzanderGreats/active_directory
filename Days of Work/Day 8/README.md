@@ -879,3 +879,6 @@
     - With that done, we have migrated basically everything over without breaking anything.
     - `gen_ad.ps1` was designed not to overwrite anything, so the password changes I have done for River and Felix should not have been touched, let alone harmed.
     - I'll test those things, but the changes to `remove_mda.ps1` file have been made, all that really needs to happen now is testing that out with a "what if" summary.
+    - Everything works, I loged into River's adm account perfectly fine. I am going to test Felix, but I might have forgotten his password, and might not have written it down... Fortunately, I have left how I changed it laying around, so if I need to, I can just... Do that.
+    - Changed the password, and going to test getting in now.
+    - Haza, it works. At least I always have the option of force changing the password on the server instead of brute forcing it.
