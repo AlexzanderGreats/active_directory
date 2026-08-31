@@ -180,3 +180,290 @@
 
     - Implomented the changes both `gen_ad.ps1`, `ad_schma.json`, and `remove_mada.ps1`.
     - I am not going to copy them over from the Managment controller/ workstation into the Domain Controller, and go from there.
+
+    - With the new files moved over, I ran the new `gen_ad.ps1` with the new `ad_schema.json`, and it did not appear to have any errors.
+
+    ```Shell
+    [192.168.244.155]: PS C:\Windows\Tasks> .\gen_ad.ps1 -JSONfile ".\ad_schema.json"
+    ========================================
+    MDA ACTIVE DIRECTORY GENERATOR
+    ========================================
+    JSON File: .\ad_schema.json
+    Base DN: DC=MDA,DC=com
+    Root OU: MDA
+    ========================================
+
+    ========================================
+    Validating JSON Schema
+    ========================================
+    [SCHEMA VALID] No blocking errors detected.
+
+    ========================================
+    Creating MDA Organizational Units
+    ========================================
+    [OU EXISTS] MDA
+    [OWNERSHIP ADDED] MDA
+    [OU EXISTS] Users
+    [OWNERSHIP ADDED] Users
+    [OU EXISTS] Privileged Accounts
+    [OWNERSHIP ADDED] Privileged Accounts
+    [OU EXISTS] Groups
+    [OWNERSHIP ADDED] Groups
+    [OU EXISTS] Workstations
+    [OWNERSHIP ADDED] Workstations
+    [OU EXISTS] Servers
+    [OWNERSHIP ADDED] Servers
+    [OU EXISTS] Surveillance
+    [OWNERSHIP ADDED] Surveillance
+    [OU EXISTS] Surveillance
+    [OWNERSHIP ADDED] Surveillance
+    [OU EXISTS] Information Technology
+    [OWNERSHIP ADDED] Information Technology
+    [OU EXISTS] Information Technology
+    [OWNERSHIP ADDED] Information Technology
+    [OU EXISTS] Evaluation
+    [OWNERSHIP ADDED] Evaluation
+    [OU EXISTS] Evaluation
+    [OWNERSHIP ADDED] Evaluation
+    [OU EXISTS] Registration
+    [OWNERSHIP ADDED] Registration
+    [OU EXISTS] Registration
+    [OWNERSHIP ADDED] Registration
+    [OU EXISTS] Distribution
+    [OWNERSHIP ADDED] Distribution
+    [OU EXISTS] Distribution
+    [OWNERSHIP ADDED] Distribution
+
+    ========================================
+    Creating MDA Security Groups
+    ========================================
+    [GROUP EXISTS] MDA_Surveillance
+    [OWNERSHIP ADDED] MDA_Surveillance
+    [GROUP EXISTS] MDA_Surveillance_Chiefs
+    [OWNERSHIP ADDED] MDA_Surveillance_Chiefs
+    [GROUP EXISTS] MDA_Surveillance_Admins
+    [OWNERSHIP ADDED] MDA_Surveillance_Admins
+    [GROUP EXISTS] MDA_IT
+    [OWNERSHIP ADDED] MDA_IT
+    [GROUP EXISTS] MDA_IT_Chiefs
+    [OWNERSHIP ADDED] MDA_IT_Chiefs
+    [GROUP EXISTS] MDA_IT_Admins
+    [OWNERSHIP ADDED] MDA_IT_Admins
+    [GROUP EXISTS] MDA_Evaluation
+    [OWNERSHIP ADDED] MDA_Evaluation
+    [GROUP EXISTS] MDA_Evaluation_Chiefs
+    [OWNERSHIP ADDED] MDA_Evaluation_Chiefs
+    [GROUP EXISTS] MDA_Evaluation_Admins
+    [OWNERSHIP ADDED] MDA_Evaluation_Admins
+    [GROUP EXISTS] MDA_Registration
+    [OWNERSHIP ADDED] MDA_Registration
+    [GROUP EXISTS] MDA_Registration_Chiefs
+    [OWNERSHIP ADDED] MDA_Registration_Chiefs
+    [GROUP EXISTS] MDA_Registration_Admins
+    [OWNERSHIP ADDED] MDA_Registration_Admins
+    [GROUP EXISTS] MDA_Distribution
+    [OWNERSHIP ADDED] MDA_Distribution
+    [GROUP EXISTS] MDA_Distribution_Chiefs
+    [OWNERSHIP ADDED] MDA_Distribution_Chiefs
+    [GROUP EXISTS] MDA_Distribution_Admins
+    [OWNERSHIP ADDED] MDA_Distribution_Admins
+
+    ----------------------------------------
+    Processing: Arthur River
+    Username: arthur_river
+    Department: Surveillance
+    Position: Surveillance Chief
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] arthur_river
+    [OWNERSHIP ADDED] arthur_river
+    [MEMBERSHIP EXISTS] arthur_river -> MDA_Surveillance_Chiefs
+    [MEMBERSHIP EXISTS] arthur_river -> MDA_Surveillance
+
+    ----------------------------------------
+    Processing: Arthur River
+    Username: adm_arthur_river
+    Department: Surveillance
+    Position: Surveillance Chief
+    Account Type: privileged
+    ----------------------------------------
+    OU: OU=Surveillance,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] adm_arthur_river
+    [OWNERSHIP ADDED] adm_arthur_river
+    [MEMBERSHIP EXISTS] adm_arthur_river -> MDA_Surveillance_Admins
+
+    ----------------------------------------
+    Processing: Scott Kang
+    Username: scott_kang
+    Department: Surveillance
+    Position: Surveillance Agent
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] scott_kang
+    [OWNERSHIP ADDED] scott_kang
+    [MEMBERSHIP EXISTS] scott_kang -> MDA_Surveillance
+
+    ----------------------------------------
+    Processing: Robert Gordon
+    Username: robert_gordon
+    Department: Information Technology
+    Position: Information Technology Chief
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] robert_gordon
+    [OWNERSHIP ADDED] robert_gordon
+    [MEMBERSHIP EXISTS] robert_gordon -> MDA_IT_Chiefs
+    [MEMBERSHIP EXISTS] robert_gordon -> MDA_IT
+
+    ----------------------------------------
+    Processing: Robert Gordon
+    Username: adm_robert_gordon
+    Department: Information Technology
+    Position: Information Technology Chief
+    Account Type: privileged
+    ----------------------------------------
+    OU: OU=Information Technology,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] adm_robert_gordon
+    [OWNERSHIP ADDED] adm_robert_gordon
+    [MEMBERSHIP EXISTS] adm_robert_gordon -> MDA_IT_Admins
+
+    ----------------------------------------
+    Processing: Luke Gibson
+    Username: luke_gibson
+    Department: Information Technology
+    Position: Information Technology Technician
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] luke_gibson
+    [OWNERSHIP ADDED] luke_gibson
+    [MEMBERSHIP EXISTS] luke_gibson -> MDA_IT
+
+    ----------------------------------------
+    Processing: Lucy Hill
+    Username: lucy_hill
+    Department: Evaluation
+    Position: Evaluation Chief
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] lucy_hill
+    [OWNERSHIP ADDED] lucy_hill
+    [MEMBERSHIP EXISTS] lucy_hill -> MDA_Evaluation_Chiefs
+    [MEMBERSHIP EXISTS] lucy_hill -> MDA_Evaluation
+
+    ----------------------------------------
+    Processing: Lucy Hill
+    Username: adm_lucy_hill
+    Department: Evaluation
+    Position: Evaluation Chief
+    Account Type: privileged
+    ----------------------------------------
+    OU: OU=Evaluation,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] adm_lucy_hill
+    [OWNERSHIP ADDED] adm_lucy_hill
+    [MEMBERSHIP EXISTS] adm_lucy_hill -> MDA_Evaluation_Admins
+
+    ----------------------------------------
+    Processing: Brentley Terry
+    Username: brentley_terry
+    Department: Evaluation
+    Position: Evaluation Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] brentley_terry
+    [OWNERSHIP ADDED] brentley_terry
+    [MEMBERSHIP EXISTS] brentley_terry -> MDA_Evaluation
+
+    ----------------------------------------
+    Processing: Truman Sweet
+    Username: truman_sweet
+    Department: Registration
+    Position: Registration Chief
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] truman_sweet
+    [OWNERSHIP ADDED] truman_sweet
+    [MEMBERSHIP EXISTS] truman_sweet -> MDA_Registration_Chiefs
+    [MEMBERSHIP EXISTS] truman_sweet -> MDA_Registration
+
+    ----------------------------------------
+    Processing: Truman Sweet
+    Username: adm_truman_sweet
+    Department: Registration
+    Position: Registration Chief
+    Account Type: privileged
+    ----------------------------------------
+    OU: OU=Registration,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] adm_truman_sweet
+    [OWNERSHIP ADDED] adm_truman_sweet
+    [MEMBERSHIP EXISTS] adm_truman_sweet -> MDA_Registration_Admins
+
+    ----------------------------------------
+    Processing: Jess Martin
+    Username: jess_martin
+    Department: Registration
+    Position: Registration Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] jess_martin
+    [OWNERSHIP ADDED] jess_martin
+    [MEMBERSHIP EXISTS] jess_martin -> MDA_Registration
+
+    ----------------------------------------
+    Processing: Milan Schmidt
+    Username: milan_schmidt
+    Department: Distribution
+    Position: Distribution Chief
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] milan_schmidt
+    [OWNERSHIP ADDED] milan_schmidt
+    [MEMBERSHIP EXISTS] milan_schmidt -> MDA_Distribution_Chiefs
+    [MEMBERSHIP EXISTS] milan_schmidt -> MDA_Distribution
+
+    ----------------------------------------
+    Processing: Milan Schmidt
+    Username: adm_milan_schmidt
+    Department: Distribution
+    Position: Distribution Chief
+    Account Type: privileged
+    ----------------------------------------
+    OU: OU=Distribution,OU=Privileged Accounts,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] adm_milan_schmidt
+    [OWNERSHIP ADDED] adm_milan_schmidt
+    [MEMBERSHIP EXISTS] adm_milan_schmidt -> MDA_Distribution_Admins
+
+    ----------------------------------------
+    Processing: Alina Cox
+    Username: alina_cox
+    Department: Distribution
+    Position: Distribution Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] alina_cox
+    [OWNERSHIP ADDED] alina_cox
+    [MEMBERSHIP EXISTS] alina_cox -> MDA_Distribution
+
+    ========================================
+    MDA ACTIVE DIRECTORY SUMMARY
+    ========================================
+    Standard Accounts:   10
+    Privileged Accounts: 5
+    Total Accounts:      15
+    Security Groups:     15
+    ========================================
+
+    [COMPLETE] MDA Active Directory generation finished.
+    ```
+
+    - With that out of the way, I will probably add similar functionality to `gen_vuln_schema.ps1` to include Ownership metadata to the `generated_vuln_schema.json` file.
+    - .
