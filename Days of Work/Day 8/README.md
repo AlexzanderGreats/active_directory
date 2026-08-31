@@ -466,4 +466,416 @@
     ```
 
     - With that out of the way, I will probably add similar functionality to `gen_vuln_schema.ps1` to include Ownership metadata to the `generated_vuln_schema.json` file.
-    - .
+    - Generated a new `generated_vuln_schema.json` file with the same command as before.
+
+    ```Shell
+    [192.168.244.155]: PS C:\Windows\Tasks> .\gen_vuln_schema.ps1 `
+    >>          -OutputPath ".\generated_vuln_schema.json" `
+    >>          -UserCount 20 `
+    >>          -WeakPasswordPercent 35 `
+    >>          -Seed 5024
+    ```
+
+    - Should have produced the same, or similar enough file.
+
+    ```Shell
+    [SEED] Random generation seed set to 5024
+
+    ========================================
+    MDA VULNERABLE SCHEMA GENERATOR
+    ========================================
+    Users Requested:        20
+    Weak Password Percent:  35%
+    Policy Failures:        False
+    Output Path:            .\generated_vuln_schema.json
+    ========================================
+    [GENERATED] felix_grey -> Surveillance / Surveillance Agent / weak
+    [GENERATED] ivan_west -> Distribution / Asset Distribution Analyst / stronger
+    [GENERATED] elena_dalton -> Distribution / Distribution Specialist / weak
+    [GENERATED] julia_dalton -> Distribution / Distribution Specialist / stronger
+    [GENERATED] bianca_ellis -> Surveillance / Surveillance Analyst / stronger
+    [GENERATED] helena_cole -> Distribution / Auction Operations Specialist / stronger
+    [GENERATED] priya_reed -> Distribution / Asset Distribution Analyst / stronger
+    [GENERATED] elias_pierce -> Evaluation / Evaluation Specialist / stronger
+    [GENERATED] lena_frost -> Registration / Records Specialist / stronger
+    [GENERATED] elena_price -> Distribution / Distribution Specialist / stronger
+    [GENERATED] yara_vale -> Evaluation / Mythic Assessment Specialist / stronger
+    [GENERATED] selene_hayes -> Registration / Guild Registration Analyst / weak
+    [GENERATED] helena_turner -> Registration / Registration Specialist / stronger
+    [GENERATED] jade_morrow -> Information Technology / IT Operations Analyst / stronger
+    [GENERATED] isaac_grey -> Information Technology / IT Operations Analyst / stronger
+    [GENERATED] yara_nolan -> Information Technology / Information Technology Technician / stronger
+    [GENERATED] diana_archer -> Surveillance / Surveillance Analyst / weak
+    [GENERATED] diana_cross -> Surveillance / Surveillance Agent / stronger
+    [GENERATED] nadia_ellis -> Evaluation / Evaluation Specialist / stronger
+    [GENERATED] orion_owens -> Information Technology / IT Operations Analyst / stronger
+
+    ========================================
+    Validating Generated Schema
+    ========================================
+    [SCHEMA VALID] Generated schema passed validation.
+
+    ========================================
+    GENERATION SUMMARY
+    ========================================
+    Total Users:              20
+    Weak Password Users:      4
+    Stronger Password Users:  16
+    Policy-Failure Users:     0
+    ========================================
+
+    [COMPLETE] Generated schema written to:
+    .\generated_vuln_schema.json
+    ```
+
+    - Now I just need to run the `generated_vuln_schema.json` through `gen_ad.ps1` and apply it to the existing architecture. However, thinking about it now... I did not need to add that kind of functionality when the `gen_ad.ps1` does that for me...
+    - Oh well, its there for the sake of being there.
+
+    - Anyway, moving away from that realization of redundancy, I copied over the new `generated_vuln_schema.json` and named as `new_generated_vuln_schema.json` for the sake of knowing what is what.
+    - Ran the new `JSON` through `gen_ad.ps1`
+
+    ```Shell
+    PS C:\Windows\Tasks> .\gen_ad.ps1 -JSONfile ".\generated_vuln_schema.json"
+    ```
+
+    - There appears to be no issues with applying it, and it seems like the migration applied smoothly.
+
+    ```Shell
+    ========================================
+    MDA ACTIVE DIRECTORY GENERATOR
+    ========================================
+    JSON File: .\generated_vuln_schema.json
+    Base DN: DC=MDA,DC=com
+    Root OU: MDA
+    ========================================
+
+    ========================================
+    Validating JSON Schema
+    ========================================
+    [SCHEMA VALID] No blocking errors detected.
+
+    ========================================
+    Creating MDA Organizational Units
+    ========================================
+    [OU EXISTS] MDA
+    [OWNERSHIP EXISTS] MDA
+    [OU EXISTS] Users
+    [OWNERSHIP EXISTS] Users
+    [OU EXISTS] Privileged Accounts
+    [OWNERSHIP EXISTS] Privileged Accounts
+    [OU EXISTS] Groups
+    [OWNERSHIP EXISTS] Groups
+    [OU EXISTS] Workstations
+    [OWNERSHIP EXISTS] Workstations
+    [OU EXISTS] Servers
+    [OWNERSHIP EXISTS] Servers
+    [OU EXISTS] Surveillance
+    [OWNERSHIP EXISTS] Surveillance
+    [OU EXISTS] Surveillance
+    [OWNERSHIP EXISTS] Surveillance
+    [OU EXISTS] Information Technology
+    [OWNERSHIP EXISTS] Information Technology
+    [OU EXISTS] Information Technology
+    [OWNERSHIP EXISTS] Information Technology
+    [OU EXISTS] Evaluation
+    [OWNERSHIP EXISTS] Evaluation
+    [OU EXISTS] Evaluation
+    [OWNERSHIP EXISTS] Evaluation
+    [OU EXISTS] Registration
+    [OWNERSHIP EXISTS] Registration
+    [OU EXISTS] Registration
+    [OWNERSHIP EXISTS] Registration
+    [OU EXISTS] Distribution
+    [OWNERSHIP EXISTS] Distribution
+    [OU EXISTS] Distribution
+    [OWNERSHIP EXISTS] Distribution
+
+    ========================================
+    Creating MDA Security Groups
+    ========================================
+    [GROUP EXISTS] MDA_Surveillance
+    [OWNERSHIP EXISTS] MDA_Surveillance
+    [GROUP EXISTS] MDA_Surveillance_Chiefs
+    [OWNERSHIP EXISTS] MDA_Surveillance_Chiefs
+    [GROUP EXISTS] MDA_Surveillance_Admins
+    [OWNERSHIP EXISTS] MDA_Surveillance_Admins
+    [GROUP EXISTS] MDA_IT
+    [OWNERSHIP EXISTS] MDA_IT
+    [GROUP EXISTS] MDA_IT_Chiefs
+    [OWNERSHIP EXISTS] MDA_IT_Chiefs
+    [GROUP EXISTS] MDA_IT_Admins
+    [OWNERSHIP EXISTS] MDA_IT_Admins
+    [GROUP EXISTS] MDA_Evaluation
+    [OWNERSHIP EXISTS] MDA_Evaluation
+    [GROUP EXISTS] MDA_Evaluation_Chiefs
+    [OWNERSHIP EXISTS] MDA_Evaluation_Chiefs
+    [GROUP EXISTS] MDA_Evaluation_Admins
+    [OWNERSHIP EXISTS] MDA_Evaluation_Admins
+    [GROUP EXISTS] MDA_Registration
+    [OWNERSHIP EXISTS] MDA_Registration
+    [GROUP EXISTS] MDA_Registration_Chiefs
+    [OWNERSHIP EXISTS] MDA_Registration_Chiefs
+    [GROUP EXISTS] MDA_Registration_Admins
+    [OWNERSHIP EXISTS] MDA_Registration_Admins
+    [GROUP EXISTS] MDA_Distribution
+    [OWNERSHIP EXISTS] MDA_Distribution
+    [GROUP EXISTS] MDA_Distribution_Chiefs
+    [OWNERSHIP EXISTS] MDA_Distribution_Chiefs
+    [GROUP EXISTS] MDA_Distribution_Admins
+    [OWNERSHIP EXISTS] MDA_Distribution_Admins
+
+    ----------------------------------------
+    Processing: Felix Grey
+    Username: felix_grey
+    Department: Surveillance
+    Position: Surveillance Agent
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] felix_grey
+    [OWNERSHIP ADDED] felix_grey
+    [MEMBERSHIP EXISTS] felix_grey -> MDA_Surveillance
+
+    ----------------------------------------
+    Processing: Ivan West
+    Username: ivan_west
+    Department: Distribution
+    Position: Asset Distribution Analyst
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] ivan_west
+    [OWNERSHIP ADDED] ivan_west
+    [MEMBERSHIP EXISTS] ivan_west -> MDA_Distribution
+
+    ----------------------------------------
+    Processing: Elena Dalton
+    Username: elena_dalton
+    Department: Distribution
+    Position: Distribution Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] elena_dalton
+    [OWNERSHIP ADDED] elena_dalton
+    [MEMBERSHIP EXISTS] elena_dalton -> MDA_Distribution
+
+    ----------------------------------------
+    Processing: Julia Dalton
+    Username: julia_dalton
+    Department: Distribution
+    Position: Distribution Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] julia_dalton
+    [OWNERSHIP ADDED] julia_dalton
+    [MEMBERSHIP EXISTS] julia_dalton -> MDA_Distribution
+
+    ----------------------------------------
+    Processing: Bianca Ellis
+    Username: bianca_ellis
+    Department: Surveillance
+    Position: Surveillance Analyst
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] bianca_ellis
+    [OWNERSHIP ADDED] bianca_ellis
+    [MEMBERSHIP EXISTS] bianca_ellis -> MDA_Surveillance
+
+    ----------------------------------------
+    Processing: Helena Cole
+    Username: helena_cole
+    Department: Distribution
+    Position: Auction Operations Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] helena_cole
+    [OWNERSHIP ADDED] helena_cole
+    [MEMBERSHIP EXISTS] helena_cole -> MDA_Distribution
+
+    ----------------------------------------
+    Processing: Priya Reed
+    Username: priya_reed
+    Department: Distribution
+    Position: Asset Distribution Analyst
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] priya_reed
+    [OWNERSHIP ADDED] priya_reed
+    [MEMBERSHIP EXISTS] priya_reed -> MDA_Distribution
+
+    ----------------------------------------
+    Processing: Elias Pierce
+    Username: elias_pierce
+    Department: Evaluation
+    Position: Evaluation Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] elias_pierce
+    [OWNERSHIP ADDED] elias_pierce
+    [MEMBERSHIP EXISTS] elias_pierce -> MDA_Evaluation
+
+    ----------------------------------------
+    Processing: Lena Frost
+    Username: lena_frost
+    Department: Registration
+    Position: Records Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] lena_frost
+    [OWNERSHIP ADDED] lena_frost
+    [MEMBERSHIP EXISTS] lena_frost -> MDA_Registration
+
+    ----------------------------------------
+    Processing: Elena Price
+    Username: elena_price
+    Department: Distribution
+    Position: Distribution Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Distribution,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] elena_price
+    [OWNERSHIP ADDED] elena_price
+    [MEMBERSHIP EXISTS] elena_price -> MDA_Distribution
+
+    ----------------------------------------
+    Processing: Yara Vale
+    Username: yara_vale
+    Department: Evaluation
+    Position: Mythic Assessment Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] yara_vale
+    [OWNERSHIP ADDED] yara_vale
+    [MEMBERSHIP EXISTS] yara_vale -> MDA_Evaluation
+
+    ----------------------------------------
+    Processing: Selene Hayes
+    Username: selene_hayes
+    Department: Registration
+    Position: Guild Registration Analyst
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] selene_hayes
+    [OWNERSHIP ADDED] selene_hayes
+    [MEMBERSHIP EXISTS] selene_hayes -> MDA_Registration
+
+    ----------------------------------------
+    Processing: Helena Turner
+    Username: helena_turner
+    Department: Registration
+    Position: Registration Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Registration,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] helena_turner
+    [OWNERSHIP ADDED] helena_turner
+    [MEMBERSHIP EXISTS] helena_turner -> MDA_Registration
+
+    ----------------------------------------
+    Processing: Jade Morrow
+    Username: jade_morrow
+    Department: Information Technology
+    Position: IT Operations Analyst
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] jade_morrow
+    [OWNERSHIP ADDED] jade_morrow
+    [MEMBERSHIP EXISTS] jade_morrow -> MDA_IT
+
+    ----------------------------------------
+    Processing: Isaac Grey
+    Username: isaac_grey
+    Department: Information Technology
+    Position: IT Operations Analyst
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] isaac_grey
+    [OWNERSHIP ADDED] isaac_grey
+    [MEMBERSHIP EXISTS] isaac_grey -> MDA_IT
+
+    ----------------------------------------
+    Processing: Yara Nolan
+    Username: yara_nolan
+    Department: Information Technology
+    Position: Information Technology Technician
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] yara_nolan
+    [OWNERSHIP ADDED] yara_nolan
+    [MEMBERSHIP EXISTS] yara_nolan -> MDA_IT
+
+    ----------------------------------------
+    Processing: Diana Archer
+    Username: diana_archer
+    Department: Surveillance
+    Position: Surveillance Analyst
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] diana_archer
+    [OWNERSHIP ADDED] diana_archer
+    [MEMBERSHIP EXISTS] diana_archer -> MDA_Surveillance
+
+    ----------------------------------------
+    Processing: Diana Cross
+    Username: diana_cross
+    Department: Surveillance
+    Position: Surveillance Agent
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Surveillance,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] diana_cross
+    [OWNERSHIP ADDED] diana_cross
+    [MEMBERSHIP EXISTS] diana_cross -> MDA_Surveillance
+
+    ----------------------------------------
+    Processing: Nadia Ellis
+    Username: nadia_ellis
+    Department: Evaluation
+    Position: Evaluation Specialist
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Evaluation,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] nadia_ellis
+    [OWNERSHIP ADDED] nadia_ellis
+    [MEMBERSHIP EXISTS] nadia_ellis -> MDA_Evaluation
+
+    ----------------------------------------
+    Processing: Orion Owens
+    Username: orion_owens
+    Department: Information Technology
+    Position: IT Operations Analyst
+    Account Type: standard
+    ----------------------------------------
+    OU: OU=Information Technology,OU=Users,OU=MDA,DC=MDA,DC=com
+    [USER EXISTS] orion_owens
+    [OWNERSHIP ADDED] orion_owens
+    [MEMBERSHIP EXISTS] orion_owens -> MDA_IT
+
+    ========================================
+    MDA ACTIVE DIRECTORY SUMMARY
+    ========================================
+    Standard Accounts:   20
+    Privileged Accounts: 0
+    Total Accounts:      20
+    Security Groups:     15
+    ========================================
+
+    [COMPLETE] MDA Active Directory generation finished.
+    ```
+
+    - With that done, we have migrated basically everything over without breaking anything.
+    - `gen_ad.ps1` was designed not to overwrite anything, so the password changes I have done for River and Felix should not have been touched, let alone harmed.
+    - I'll test those things, but the changes to `remove_mda.ps1` file have been made, all that really needs to happen now is testing that out with a "what if" summary.

@@ -1,0 +1,369 @@
+﻿{
+    "metadata":  {
+                     "schema_name":  "MDA Vulnerable Active Directory Baseline",
+                     "schema_version":  "1.0",
+                     "generated":  true,
+                     "generator":  "gen_vuln_schema.ps1",
+                     "generator_version":  "1.0",
+                     "organization":  "Mythical Dungeon Association",
+                     "domain":  "MDA.com",
+                     "root_ou":  "MDA",
+                     "ownership_tag":  "MDA-LAB",
+                     "schema_type":  "MDA vulnerable lab schema",
+                     "generated_at":  "2026-08-30T18:39:50.3544358-07:00",
+                     "user_count":  20,
+                     "weak_password_percent":  35,
+                     "includes_policy_failures":  false,
+                     "seed":  5024,
+                     "warning":  "All credentials are disposable lab-only credentials for an isolated test environment."
+                 },
+    "users":  [
+                  {
+                      "first_name":  "Felix",
+                      "last_name":  "Grey",
+                      "password":  "Password2026!",
+                      "username":  "felix_grey",
+                      "department":  "Surveillance",
+                      "job_title":  "Surveillance Agent",
+                      "groups":  [
+                                     "MDA_Surveillance"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "weak",
+                      "intentional_vulnerability":  "Guessable lab password that may satisfy complexity requirements but remains poor security practice."
+                  },
+                  {
+                      "first_name":  "Ivan",
+                      "last_name":  "West",
+                      "password":  "Surv3il!Signal_918",
+                      "username":  "ivan_west",
+                      "department":  "Distribution",
+                      "job_title":  "Asset Distribution Analyst",
+                      "groups":  [
+                                     "MDA_Distribution"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Elena",
+                      "last_name":  "Dalton",
+                      "password":  "Dungeon123!",
+                      "username":  "elena_dalton",
+                      "department":  "Distribution",
+                      "job_title":  "Distribution Specialist",
+                      "groups":  [
+                                     "MDA_Distribution"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "weak",
+                      "intentional_vulnerability":  "Guessable lab password that may satisfy complexity requirements but remains poor security practice."
+                  },
+                  {
+                      "first_name":  "Julia",
+                      "last_name":  "Dalton",
+                      "password":  "M!thic_R0ute#381",
+                      "username":  "julia_dalton",
+                      "department":  "Distribution",
+                      "job_title":  "Distribution Specialist",
+                      "groups":  [
+                                     "MDA_Distribution"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Bianca",
+                      "last_name":  "Ellis",
+                      "password":  "UCG_Access!5739",
+                      "username":  "bianca_ellis",
+                      "department":  "Surveillance",
+                      "job_title":  "Surveillance Analyst",
+                      "groups":  [
+                                     "MDA_Surveillance"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Helena",
+                      "last_name":  "Cole",
+                      "password":  "MDA_R3dCedar!7421",
+                      "username":  "helena_cole",
+                      "department":  "Distribution",
+                      "job_title":  "Auction Operations Specialist",
+                      "groups":  [
+                                     "MDA_Distribution"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Priya",
+                      "last_name":  "Reed",
+                      "password":  "Surv3il!Signal_918",
+                      "username":  "priya_reed",
+                      "department":  "Distribution",
+                      "job_title":  "Asset Distribution Analyst",
+                      "groups":  [
+                                     "MDA_Distribution"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Elias",
+                      "last_name":  "Pierce",
+                      "password":  "Surv3il!Signal_918",
+                      "username":  "elias_pierce",
+                      "department":  "Evaluation",
+                      "job_title":  "Evaluation Specialist",
+                      "groups":  [
+                                     "MDA_Evaluation"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Lena",
+                      "last_name":  "Frost",
+                      "password":  "DunG30n#Watch_651",
+                      "username":  "lena_frost",
+                      "department":  "Registration",
+                      "job_title":  "Records Specialist",
+                      "groups":  [
+                                     "MDA_Registration"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Elena",
+                      "last_name":  "Price",
+                      "password":  "MDA_R3dCedar!7421",
+                      "username":  "elena_price",
+                      "department":  "Distribution",
+                      "job_title":  "Distribution Specialist",
+                      "groups":  [
+                                     "MDA_Distribution"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Yara",
+                      "last_name":  "Vale",
+                      "password":  "UCG_Access!5739",
+                      "username":  "yara_vale",
+                      "department":  "Evaluation",
+                      "job_title":  "Mythic Assessment Specialist",
+                      "groups":  [
+                                     "MDA_Evaluation"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Selene",
+                      "last_name":  "Hayes",
+                      "password":  "Klato2026!",
+                      "username":  "selene_hayes",
+                      "department":  "Registration",
+                      "job_title":  "Guild Registration Analyst",
+                      "groups":  [
+                                     "MDA_Registration"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "weak",
+                      "intentional_vulnerability":  "Guessable lab password that may satisfy complexity requirements but remains poor security practice."
+                  },
+                  {
+                      "first_name":  "Helena",
+                      "last_name":  "Turner",
+                      "password":  "Surv3il!Signal_918",
+                      "username":  "helena_turner",
+                      "department":  "Registration",
+                      "job_title":  "Registration Specialist",
+                      "groups":  [
+                                     "MDA_Registration"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Jade",
+                      "last_name":  "Morrow",
+                      "password":  "Evalu8#Stone_4721",
+                      "username":  "jade_morrow",
+                      "department":  "Information Technology",
+                      "job_title":  "IT Operations Analyst",
+                      "groups":  [
+                                     "MDA_IT"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Isaac",
+                      "last_name":  "Grey",
+                      "password":  "Kl@to_Guard!9284",
+                      "username":  "isaac_grey",
+                      "department":  "Information Technology",
+                      "job_title":  "IT Operations Analyst",
+                      "groups":  [
+                                     "MDA_IT"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Yara",
+                      "last_name":  "Nolan",
+                      "password":  "MDA_R3dCedar!7421",
+                      "username":  "yara_nolan",
+                      "department":  "Information Technology",
+                      "job_title":  "Information Technology Technician",
+                      "groups":  [
+                                     "MDA_IT"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Diana",
+                      "last_name":  "Archer",
+                      "password":  "Magic1234!",
+                      "username":  "diana_archer",
+                      "department":  "Surveillance",
+                      "job_title":  "Surveillance Analyst",
+                      "groups":  [
+                                     "MDA_Surveillance"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "weak",
+                      "intentional_vulnerability":  "Guessable lab password that may satisfy complexity requirements but remains poor security practice."
+                  },
+                  {
+                      "first_name":  "Diana",
+                      "last_name":  "Cross",
+                      "password":  "Evalu8#Stone_4721",
+                      "username":  "diana_cross",
+                      "department":  "Surveillance",
+                      "job_title":  "Surveillance Agent",
+                      "groups":  [
+                                     "MDA_Surveillance"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Nadia",
+                      "last_name":  "Ellis",
+                      "password":  "Reg!stry_Gate#2048",
+                      "username":  "nadia_ellis",
+                      "department":  "Evaluation",
+                      "job_title":  "Evaluation Specialist",
+                      "groups":  [
+                                     "MDA_Evaluation"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  },
+                  {
+                      "first_name":  "Orion",
+                      "last_name":  "Owens",
+                      "password":  "Evalu8#Stone_4721",
+                      "username":  "orion_owens",
+                      "department":  "Information Technology",
+                      "job_title":  "IT Operations Analyst",
+                      "groups":  [
+                                     "MDA_IT"
+                                 ],
+                      "account_type":  "standard",
+                      "generated":  true,
+                      "password_classification":  "stronger",
+                      "intentional_vulnerability":  null
+                  }
+              ],
+    "groups":  [
+                   {
+                       "name":  "MDA_Surveillance"
+                   },
+                   {
+                       "name":  "MDA_Surveillance_Chiefs"
+                   },
+                   {
+                       "name":  "MDA_Surveillance_Admins"
+                   },
+                   {
+                       "name":  "MDA_IT"
+                   },
+                   {
+                       "name":  "MDA_IT_Chiefs"
+                   },
+                   {
+                       "name":  "MDA_IT_Admins"
+                   },
+                   {
+                       "name":  "MDA_Evaluation"
+                   },
+                   {
+                       "name":  "MDA_Evaluation_Chiefs"
+                   },
+                   {
+                       "name":  "MDA_Evaluation_Admins"
+                   },
+                   {
+                       "name":  "MDA_Registration"
+                   },
+                   {
+                       "name":  "MDA_Registration_Chiefs"
+                   },
+                   {
+                       "name":  "MDA_Registration_Admins"
+                   },
+                   {
+                       "name":  "MDA_Distribution"
+                   },
+                   {
+                       "name":  "MDA_Distribution_Chiefs"
+                   },
+                   {
+                       "name":  "MDA_Distribution_Admins"
+                   }
+               ]
+}
